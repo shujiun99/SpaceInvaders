@@ -5,7 +5,6 @@
  */
 package game.Entity;
 
-import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 
 public class Enemy extends Entity{
@@ -20,7 +19,7 @@ public class Enemy extends Entity{
         this.x = x;
         this.y = y;
 
-        var EnemyImg = "src/images/asd.jpg";
+        var EnemyImg = "src/images/enemy.jpg";
         var imageIcon = new ImageIcon(EnemyImg);
         
         
