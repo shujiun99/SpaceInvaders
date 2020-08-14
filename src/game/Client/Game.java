@@ -22,7 +22,6 @@ import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -93,8 +92,8 @@ public class Game extends Canvas implements Runnable {
     private void enemyInit() {
         enemyList = new ArrayListWithIterator<>();
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 4; j++) {
 
                 var enemy = new Enemy(ENEMY_INIT_X + 50 * j,
                         ENEMY_INIT_Y + 50 * i);
@@ -148,7 +147,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void drawEnemies(Graphics g) {
-        Iterator<Enemy> iterator = enemyList.getIterator();
+        var iterator = enemyList.getIterator();
         iterator.forEachRemaining(Enemy -> {
 
             if (Enemy.isVisible()) {
@@ -266,7 +265,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
-        Iterator<Enemy> iterator = enemyList.getIterator();
+        var iterator = enemyList.getIterator();
         // enemies
         while (iterator.hasNext()) {
 
@@ -276,7 +275,7 @@ public class Game extends Canvas implements Runnable {
 
                 direction = -1;
 
-                Iterator<Enemy> i1 = enemyList.getIterator();
+                var i1 = enemyList.getIterator();
 
                 while (i1.hasNext()) {
 
@@ -289,7 +288,7 @@ public class Game extends Canvas implements Runnable {
 
                 direction = 1;
 
-                Iterator<Enemy> i2 = enemyList.getIterator();
+                var i2 = enemyList.getIterator();
 
                 while (i2.hasNext()) {
 
@@ -299,7 +298,7 @@ public class Game extends Canvas implements Runnable {
             }
         }
 
-        Iterator<Enemy> it = enemyList.getIterator();
+        var it = enemyList.getIterator();
 
         while (it.hasNext()) {
 
