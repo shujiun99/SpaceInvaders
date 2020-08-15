@@ -7,6 +7,8 @@ package game.Client;
 
 
 import game.Entity.Enemy;
+import game.ADT.ArrayListWithIterator;
+import game.ADT.ArrListWithIteratorInterface;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,8 +18,18 @@ import javax.swing.JFrame;
 import game.Entity.Player;
 import game.Entity.Shot;
 import game.Entity.Weapon;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import javax.sound.sampled.AudioSystem;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,6 +37,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.Clip;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 public class Game extends Canvas implements Runnable{
@@ -33,7 +50,7 @@ public class Game extends Canvas implements Runnable{
     public static final int HEIGHT = WIDTH / 12 * 9;
     public static final int SCALE = 2;
     public final String TITLE = "Space Invaders";
-    
+    private File menuSong = new File("src//sounds//Menu.wav"); 
     private boolean running = false;
     private Thread thread;
     
@@ -68,26 +85,37 @@ public class Game extends Canvas implements Runnable{
     
     private final int bulletSpeed = 2;
     private int BulletTemSpeed = bulletSpeed;
+    private Menu menu;
     
     private boolean isShooting = false;
     private int enemyKilled = 0;
     public boolean buff = false;
+    String filepathM = "src/sounds/Menu.wav";
+    String filepathG = "src/sounds/Game.wav";
     
     private Random r = new Random();
     private Weapon useW;
     
     private Instant timestart;
     private Player player;
-    private List<Enemy> enemies;
+    private ArrListWithIteratorInterface<Enemy> enemyList;
     public Controller c;
     public LinkedList<Shot> es;
     
+    public static enum STATE{
+        MENU,
+        GAME
+    };
+    
+    public static STATE state = STATE.MENU;
     
     public void init(){
         player = new Player();
         this.requestFocus();
         addKeyListener(new TAdapter(this));
+        addMouseListener(new MouseInput(this));
         c = new Controller(this);
+        menu = new Menu();
         es = c.getEs();
         w = c.getW();
         enemyInit();
@@ -95,16 +123,38 @@ public class Game extends Canvas implements Runnable{
     
     private void enemyInit() {
 
-        enemies = new ArrayList<>();
+        enemyList = new ArrayListWithIterator<>();
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 5; j++) {
 
                 var enemy = new Enemy(ENEMY_INIT_X + 50 * j,
                         ENEMY_INIT_Y + 50 * i);
-                enemies.add(enemy);
+                enemyList.add(enemy);
             }
         }
+    }
+    
+    private static void PlaySound(String musicLocation, boolean play){
+        
+        try {
+            File musicPath = new File(musicLocation);
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInput);
+            if(play){
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }else{
+                clip.stop();
+            }
+            
+            
+            
+        } catch (Exception ex) {
+           
+        }
+        
     }
     
     private synchronized void start(){
@@ -140,9 +190,16 @@ public class Game extends Canvas implements Runnable{
         Graphics g = bs.getDrawGraphics();
         
         g.drawImage(image, 0, 0, getWidth(),getHeight(),this);
-        g.drawImage(player.getImage(), (int)player.getX(), (int)player.getY(), 45, 40,this);
-        c.render(g);
-        drawEnemies(g);
+        
+        if(state == STATE.GAME){
+            g.drawImage(player.getImage(), (int)player.getX(), (int)player.getY(), 45, 40,this);
+            c.render(g);
+            drawEnemies(g);
+        }else if(state == STATE.MENU){
+            menu.render(g);
+            
+        }
+        
         
             
         g.dispose();
@@ -150,14 +207,16 @@ public class Game extends Canvas implements Runnable{
     }
     
     private void drawEnemies(Graphics g) {
-            for (Enemy enemy : enemies) {
-                if (enemy.isVisible()) {
-                    g.drawImage(enemy.getImage(), (int) enemy.getX(), (int) enemy.getY(), this);
-                }
-                if (enemy.isDying()) {
-                    enemy.dead();
+           var iterator = enemyList.getIterator();
+        iterator.forEachRemaining(Enemy -> {
+
+            if (Enemy.isVisible()) {
+                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), this);
             }
-        }
+            if (Enemy.isDying()) {
+                Enemy.dead();
+            }
+        });
     }
     
     private void RandomWeapon() {
@@ -196,6 +255,16 @@ public class Game extends Canvas implements Runnable{
         int updates = 0;
         long lastTime = System.nanoTime();
         
+        
+        
+        if(state != STATE.GAME){
+            render();
+            PlaySound(filepathG,false);
+            PlaySound(filepathM,true);
+        }
+        
+        
+        
         while(running)
         {
             now = System.nanoTime();
@@ -203,17 +272,22 @@ public class Game extends Canvas implements Runnable{
             lastTime = now;
             
             if(delta >= 1){
-            tick();
-            render();
-            delta--;
-            update();
+                tick();
+                render();
+                delta--;
+                if(state == STATE.GAME){
+                    update();
+                }
             }
             
-            if(start){
+            
+            if(state == STATE.GAME){
+                
+                if(start){
                 timestart = Instant.now();
                 start = false;
-            }
-            if(!stop){
+                }
+                if(!stop){
                 Instant stopt = Instant.now();
                 Duration tt = Duration.between(timestart,stopt);
                 if(tt.getSeconds() == 6){
@@ -231,15 +305,21 @@ public class Game extends Canvas implements Runnable{
                         }
                     } 
                 }
+            }
+            
             
         }
+        
+        
+        
         stop();
     }
 
     private void tick() {
-        c.tick();
-        
-        if(Collision(player,w)){
+        if(state == STATE.GAME){
+            c.tick();
+            
+            if(Collision(player,w)){
             int s = getRandomInRange(12,15);
             c.addWeaponW(new Weapon(s));
             System.out.println("WeaponAdd");
@@ -260,6 +340,12 @@ public class Game extends Canvas implements Runnable{
                  useW = null;
             }
         }
+            
+            
+        }
+        
+        
+        
         
         
     }
@@ -269,16 +355,17 @@ public class Game extends Canvas implements Runnable{
     }
     
      private void update() {
+        var iterator = enemyList.getIterator();
         // enemies
-        for (Enemy enemy : enemies) {
+        while (iterator.hasNext()) {
 
-            int x = (int) enemy.getX();
+            int x = (int) iterator.next().getX();
 
             if (x >= WIDTH * SCALE - BORDER_RIGHT && direction != -1) {
 
                 direction = -1;
 
-                Iterator<Enemy> i1 = enemies.iterator();
+                var i1 = enemyList.getIterator();
 
                 while (i1.hasNext()) {
 
@@ -291,7 +378,7 @@ public class Game extends Canvas implements Runnable{
 
                 direction = 1;
 
-                Iterator<Enemy> i2 = enemies.iterator();
+                var i2 = enemyList.getIterator();
 
                 while (i2.hasNext()) {
 
@@ -301,7 +388,7 @@ public class Game extends Canvas implements Runnable{
             }
         }
 
-        Iterator<Enemy> it = enemies.iterator();
+        var it = enemyList.getIterator();
 
         while (it.hasNext()) {
 
@@ -355,7 +442,8 @@ public class Game extends Canvas implements Runnable{
             int key = e.getKeyCode();
             player.tick();
             
-            switch (key) {
+            if(state == STATE.GAME){
+                switch (key) {
                 case KeyEvent.VK_RIGHT:
                     player.setDx(5);
                     break;
@@ -380,6 +468,8 @@ public class Game extends Canvas implements Runnable{
                     startBuff = true;
                 }
             }
+            }
+            
                     
         }
 
@@ -390,6 +480,64 @@ public class Game extends Canvas implements Runnable{
          
      }
      
+    private class MouseInput implements MouseListener{
+
+        private Game game;
+         
+         public MouseInput(Game game){
+             this.game = game;
+         }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            int mx = e.getX();
+            int my = e.getY();
+            
+            
+            if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
+                if(my >= 150 && my <= 200){
+                    Game.state = Game.state.GAME;
+                    PlaySound(filepathM,false);
+                    PlaySound(filepathG,true);
+                }
+            }
+            
+            if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
+                if(my >= 250 && my <= 300){
+                    displayHelp();
+                }
+            }
+            
+            if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
+                if(my >= 350 && my <= 400){
+                    System.exit(1);
+                }
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            
+        }
+        
+        
+        
+    } 
      public boolean Collision(Player p, ArrayList<Weapon> w){
          for(int i=0;i<w.size();i++){
             if(p.getBounds().intersects(w.get(i).getBounds())) {
@@ -409,6 +557,25 @@ public class Game extends Canvas implements Runnable{
          useW.setStartTime(buffTimeStart);
          BulletTemSpeed = useW.getSpeed();
          buff = true;
+     }
+     
+     public void displayHelp (){
+        JFrame helpFrame = new JFrame();
+                
+        String img = "src/images/help.jpg";
+        ImageIcon icon = new ImageIcon(img);
+        
+        Image img1 = icon.getImage();
+        Image newimg = img1.getScaledInstance(1000, 600, java.awt.Image.SCALE_SMOOTH);
+        ImageIcon newIcon = new ImageIcon(newimg);
+        JLabel lable = new JLabel(newIcon);
+        
+        
+        helpFrame.add(lable);
+        helpFrame.setSize(1000, 600);
+        helpFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        helpFrame.setVisible(true);
+        
      }
 }
 
