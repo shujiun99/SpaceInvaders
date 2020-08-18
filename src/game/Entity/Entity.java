@@ -13,6 +13,7 @@ import java.awt.Rectangle;
  * @author User
  */
 public class Entity {
+
     double x;
     double y;
     double dx;
@@ -23,17 +24,15 @@ public class Entity {
     int height;
     private boolean visible;
     private boolean dying;
-    
-     public Entity() {
 
+    public Entity() {
         visible = true;
     }
 
     public void dead() {
-
         visible = false;
     }
-    
+
     public double getX() {
         return x;
     }
@@ -66,7 +65,6 @@ public class Entity {
         this.dy = dy;
     }
 
-    
     public Image getImage() {
         return image;
     }
@@ -74,22 +72,22 @@ public class Entity {
     public void setImage(Image image) {
         this.image = image;
     }
-    
-     public Rectangle getBounds(){
-        return new Rectangle((int)x,(int)y,width,height);
+
+    public Rectangle getBounds() {
+        return new Rectangle((int) x, (int) y, width, height);
     }
-     
-      public boolean isVisible() {
+
+    public boolean isVisible() {
 
         return visible;
     }
-     
-     protected void setVisible(boolean visible) {
+
+    protected void setVisible(boolean visible) {
 
         this.visible = visible;
     }
-     
-      public void setDying(boolean dying) {
+
+    public void setDying(boolean dying) {
 
         this.dying = dying;
     }
@@ -98,6 +96,5 @@ public class Entity {
 
         return this.dying;
     }
-    
-}
 
+}
