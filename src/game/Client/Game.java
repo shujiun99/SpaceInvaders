@@ -60,8 +60,11 @@ public class Game extends Canvas implements Runnable {
     //timer speed delay <- affect enemy speed?
     int DELAY = 15;
     private int direction = -1;
+    //random number match trigger then enemy shoot
     int trigger;
-    int LASER_HEIGHT = 5;
+    //laser width and height
+    int LASER_HEIGHT = 10;
+    int LASER_WIDTH = 5;
 
     private ArrayList<Weapon> w;
     private boolean start = true;
@@ -115,7 +118,7 @@ public class Game extends Canvas implements Runnable {
             //column
             for (int j = 0; j < 4; j++) {
                 var enemy = new Enemy(ENEMY_INIT_X + 45 * j,
-                        ENEMY_INIT_Y + 50 * i,ENEMY_WIDTH,ENEMY_HEIGHT);
+                        ENEMY_INIT_Y + 50 * i, ENEMY_WIDTH, ENEMY_HEIGHT,LASER_WIDTH,LASER_HEIGHT);
                 enemyList.add(enemy);
             }
         }
@@ -182,7 +185,7 @@ public class Game extends Canvas implements Runnable {
             c.render(g);
             drawEnemies(g);
             drawLaser(g);
-            
+
         } else if (state == STATE.MENU) {
             menu.render(g);
         }
@@ -196,7 +199,7 @@ public class Game extends Canvas implements Runnable {
 
         iterator.forEachRemaining(Enemy -> {
             if (Enemy.isVisible()) {
-                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(),ENEMY_WIDTH,ENEMY_HEIGHT, this);
+                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), ENEMY_WIDTH, ENEMY_HEIGHT, this);
             }
             if (Enemy.isDying()) {
                 Enemy.dead();
@@ -292,7 +295,6 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         if (state == STATE.GAME) {
             c.tick();
-            
 
             if (Collision(player, w)) {
                 int s = getRandomInRange(12, 15);
@@ -302,7 +304,6 @@ public class Game extends Canvas implements Runnable {
             if (Collision(player, enemyList)) {
                 stop();
             }
-            
 
             if (startBuff) {
                 startBuff();
@@ -393,8 +394,8 @@ public class Game extends Canvas implements Runnable {
                 laser.setX(Enemy.getX());
                 laser.setY(Enemy.getY());
             }
-           
-             if (!laser.isRemove()) {
+
+            if (!laser.isRemove()) {
 
                 laser.setY(laser.getY() + 1);
 
@@ -404,8 +405,7 @@ public class Game extends Canvas implements Runnable {
                 }
             }
         });
-        
-        
+
     }
 
     private class TAdapter extends KeyAdapter {
@@ -549,12 +549,13 @@ public class Game extends Canvas implements Runnable {
         }
         return false;
     }
-    
-    public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
-      
 
-       for (int i = 1; i < enemyList.getLength(); i++) {
+    public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
+        for (int i = 1; i < enemyList.getLength(); i++) {
             if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())) {
+                return true;
+            }
+            if (p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
                 return true;
             }
         }
@@ -596,7 +597,8 @@ public class Game extends Canvas implements Runnable {
 
             if (!laser.isRemove()) {
 
-                g.drawImage(laser.getImage(), (int) laser.getX(), (int) laser.getY(), this);
+                g.drawImage(laser.getImage(), (int) laser.getX(), (int) laser.getY(), LASER_WIDTH, LASER_HEIGHT, this);
+                System.out.println(laser.getBounds());
             }
         });
     }
