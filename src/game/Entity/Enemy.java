@@ -15,17 +15,19 @@ public class Enemy extends Entity {
         return laser;
     }
 
-    public Enemy(int x, int y) {
-        initAlien(x, y);
+    public Enemy(int x, int y, int width, int height) {
+        initAlien(x, y, width, height);
     }
 
-    private void initAlien(int x, int y) {
+    private void initAlien(int x, int y, int width, int height) {
 
         this.x = x;
         this.y = y;
+        this.height = height;
+        this.width = width;
 
         laser = new Laser(x, y);
-        
+
         var EnemyImg = "src/images/enemy.jpg";
         var imageIcon = new ImageIcon(EnemyImg);
 

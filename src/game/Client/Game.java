@@ -115,7 +115,7 @@ public class Game extends Canvas implements Runnable {
             //column
             for (int j = 0; j < 4; j++) {
                 var enemy = new Enemy(ENEMY_INIT_X + 45 * j,
-                        ENEMY_INIT_Y + 50 * i);
+                        ENEMY_INIT_Y + 50 * i,ENEMY_WIDTH,ENEMY_HEIGHT);
                 enemyList.add(enemy);
             }
         }
@@ -196,7 +196,7 @@ public class Game extends Canvas implements Runnable {
 
         iterator.forEachRemaining(Enemy -> {
             if (Enemy.isVisible()) {
-                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), this);
+                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(),ENEMY_WIDTH,ENEMY_HEIGHT, this);
             }
             if (Enemy.isDying()) {
                 Enemy.dead();
@@ -292,12 +292,17 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         if (state == STATE.GAME) {
             c.tick();
+            
 
             if (Collision(player, w)) {
                 int s = getRandomInRange(12, 15);
                 c.addWeaponW(new Weapon(s));
                 System.out.println("WeaponAdd");
             }
+            if (Collision(player, enemyList)) {
+                stop();
+            }
+            
 
             if (startBuff) {
                 startBuff();
@@ -378,10 +383,10 @@ public class Game extends Canvas implements Runnable {
 
             Enemy.Laser laser = Enemy.getLaser();
             //when random number match trigger number, enemy shoot
-            System.out.println("rand :"+ rand);
-            System.out.println("trigger :"+trigger);
-            System.out.println("isVisible :"+Enemy.isVisible());
-            System.out.println("isRemove :"+laser.isRemove());
+            //System.out.println("rand :"+ rand);
+            //System.out.println("trigger :"+trigger);
+            //System.out.println("isVisible :"+Enemy.isVisible());
+            //System.out.println("isRemove :"+laser.isRemove());
             if (rand == trigger && Enemy.isVisible() && laser.isRemove()) {
 
                 laser.setRemove(false);
@@ -541,6 +546,17 @@ public class Game extends Canvas implements Runnable {
                 return true;
             }
 
+        }
+        return false;
+    }
+    
+    public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
+      
+
+       for (int i = 1; i < enemyList.getLength(); i++) {
+            if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())) {
+                return true;
+            }
         }
         return false;
     }
