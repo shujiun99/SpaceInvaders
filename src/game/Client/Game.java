@@ -121,8 +121,6 @@ public class Game extends Canvas implements Runnable {
     int numberLives = 3;
     int score = 0;
     int level = 1;
-    private int markerX, markerY;
-    private boolean hitMarker = false;
         
     public static enum STATE {
         MENU,
