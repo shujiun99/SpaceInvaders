@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import game.Entity.Player;
 import game.Entity.Shot;
 import game.Entity.Weapon;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -51,7 +52,7 @@ public class Game extends Canvas implements Runnable {
     private Thread thread;
     //initialize BufferedImage
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-
+    
     //space to the left and right border
     int BORDER_RIGHT = 50;
     int BORDER_LEFT = 5;
@@ -105,13 +106,24 @@ public class Game extends Canvas implements Runnable {
     private Instant timestart;
     //declare player
     private Player player;
+    private Player p;
+    private ArrayList<Player> ship = new ArrayList();
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
+    private ArrayList<Enemy> enemy = new ArrayList();
+    private Enemy en;
     //declare controller
     public Controller c;
     //declare bullets
     public LinkedList<Shot> es;
-
+    public Shot shot;
+    
+    int numberLives = 3;
+    int score = 0;
+    int level = 1;
+    private int markerX, markerY;
+    private boolean hitMarker = false;
+        
     public static enum STATE {
         MENU,
         GAME
@@ -137,8 +149,8 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < 2; i++) {
             //column
             for (int j = 0; j < 5; j++) {
-                var enemy = new Enemy(ENEMY_INIT_X + 45 * j,
-                        ENEMY_INIT_Y + 50 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT);
+                var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
+                        ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT);
                 enemyList.add(enemy);
             }
         }
@@ -202,9 +214,29 @@ public class Game extends Canvas implements Runnable {
 
         if (state == STATE.GAME) {
             g.drawImage(player.getImage(), (int) player.getX(), (int) player.getY(), PLAYER_WIDTH, PLAYER_HEIGHT, this);
+            
             c.render(g);
             drawEnemies(g);
             drawLaser(g);
+            
+            //display player lives
+            g.setColor(Color.WHITE);
+            g.drawString("Lives: ",11 ,20);
+            for(int i = 0; i < ship.size(); i++)
+            {
+                ship.get(i).lifeDraw(g);
+            }
+            
+            //display player score
+            g.setColor(Color.WHITE);
+            g.drawString("Score: " + score, 290, 20);
+            
+            //makes a string that says "+100" on enemy hit
+            
+            //show level
+            g.setColor(Color.WHITE);
+            g.drawString("Level " + level, 590, 20);
+            
 
         } else if (state == STATE.MENU) {
             menu.render(g);
@@ -267,12 +299,19 @@ public class Game extends Canvas implements Runnable {
             now = System.nanoTime();
             delta += (now - lastTime) / timePerTick;
             lastTime = now;
-
+            
             if (delta >= 1) {
                 tick();
                 render();
                 delta--;
                 if (state == STATE.GAME) {
+                    
+                    for(int column = 0; column < numberLives; column++)
+                    {
+                        p = new Player(48 + (column * 20), 10, Color.WHITE);
+                        ship.add(p);
+                    }
+                    
                     update();
                 }
             }
@@ -318,7 +357,7 @@ public class Game extends Canvas implements Runnable {
             }
             if (Collision(player, enemyList)) {
                 //System.out.println("debug");
-                stop();
+                //stop();
             }
 
             Collision(enemyList, es);
@@ -346,6 +385,13 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
+        
+        if (enemyList.isEmpty()) {
+            ship.clear();
+            level += 1;
+            run();
+        }
+        
         var iterator = enemyList.getIterator();
 
         while (iterator.hasNext()) {
@@ -424,6 +470,8 @@ public class Game extends Canvas implements Runnable {
                 }
             }
         });
+        
+        
 
     }
 
@@ -474,12 +522,12 @@ public class Game extends Canvas implements Runnable {
                     case KeyEvent.VK_LEFT:
                         player.setDx(-5);
                         break;
-                    case KeyEvent.VK_DOWN:
+                    /*case KeyEvent.VK_DOWN:
                         player.setDy(5);
                         break;
                     case KeyEvent.VK_UP:
                         player.setDy(-5);
-                        break;
+                        break;*/
                     default:
                         break;
                 }
@@ -570,16 +618,21 @@ public class Game extends Canvas implements Runnable {
 
     public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
         for (int i = 1; i < enemyList.getLength() + 1; i++) {
-            //either player touch with enemy or enemy inner class laser, return true
-            if (p.getBounds().intersects(enemyList.getEntry(i).getBounds()) || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
+            //player touch with enemy or enemy inner class laser, return true
+            if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())
+                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()))
+            {
+                return true;              
                 //System.out.println("player bound:" + p.getBounds());
 
                 //System.out.println("laser bound:" + enemyList.getEntry(i).getLaser().getBounds());
                 //System.out.println("enemy intersect:" + p.getBounds().intersects(enemyList.getEntry(i).getBounds()));
                 //System.out.println("laser intersect:" + p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()));
                 //System.out.println(i);
-                return true;
+                
             }
+            
+           
 
         }
         return false;
@@ -594,6 +647,8 @@ public class Game extends Canvas implements Runnable {
                     //if enemy touch bullet, remove both
                     if (enemyList.getEntry(i).getBounds().intersects(es.get(j).getBounds())) {
                         enemyKilled++;
+                        score += 100;
+                        hitMarker = true;
                         enemyList.remove(i);
                         es.remove(j);
                         return true;
