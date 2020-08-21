@@ -357,7 +357,7 @@ public class Game extends Canvas implements Runnable {
             }
             if (Collision(player, enemyList)) {
                 //System.out.println("debug");
-                //stop();
+                stop();
             }
 
             Collision(enemyList, es);
@@ -648,7 +648,6 @@ public class Game extends Canvas implements Runnable {
                     if (enemyList.getEntry(i).getBounds().intersects(es.get(j).getBounds())) {
                         enemyKilled++;
                         score += 100;
-                        hitMarker = true;
                         enemyList.remove(i);
                         es.remove(j);
                         return true;
