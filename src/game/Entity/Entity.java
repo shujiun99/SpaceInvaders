@@ -7,12 +7,13 @@ package game.Entity;
 
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Color;
 
 /**
  *
  * @author User
  */
-public class Entity {
+public abstract class Entity {
 
     double x;
     double y;
@@ -23,6 +24,9 @@ public class Entity {
     int width;
     int height;
     private boolean visible;
+    Color color;
+    boolean isColliding;
+    
 
     public Entity() {
         visible = true;
@@ -85,5 +89,13 @@ public class Entity {
 
         this.visible = visible;
     }
+    
+    public Entity(double x, double y, Color color)
+    {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+    }
+    
 
 }
