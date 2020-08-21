@@ -23,7 +23,6 @@ public class Entity {
     int width;
     int height;
     private boolean visible;
-    private boolean dying;
 
     public Entity() {
         visible = true;
@@ -82,19 +81,9 @@ public class Entity {
         return visible;
     }
 
-    protected void setVisible(boolean visible) {
+    public void setVisible(boolean visible) {
 
         this.visible = visible;
-    }
-
-    public void setDying(boolean dying) {
-
-        this.dying = dying;
-    }
-
-    public boolean isDying() {
-
-        return this.dying;
     }
 
 }

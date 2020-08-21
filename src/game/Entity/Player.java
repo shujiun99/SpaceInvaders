@@ -31,7 +31,7 @@ public class Player extends Entity{
         width = ii.getImage().getWidth(null);
         setImage(ii.getImage());
         
-        bounds = new Rectangle((int)x,(int)y,height,width);
+        bounds = new Rectangle((int)x,(int)y,width,height);
 
         double START_X = 270;
         setX(START_X);
