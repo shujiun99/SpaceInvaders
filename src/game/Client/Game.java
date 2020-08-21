@@ -62,8 +62,8 @@ public class Game extends Canvas implements Runnable {
     final int ENEMY_HEIGHT = 30;
     final int ENEMY_WIDTH = 40;
     //enemy default position
-    final int ENEMY_INIT_X = 100;
-    final int ENEMY_INIT_Y = 0;
+    final int ENEMY_INIT_X = 0;
+    final int ENEMY_INIT_Y = 35;
     //timer speed delay <- affect enemy speed?
     final int DELAY = 15;
     //enemy default moving speed and direction, positive is right, negative is left
