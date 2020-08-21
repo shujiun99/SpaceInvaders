@@ -35,18 +35,24 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Game extends Canvas implements Runnable {
-
+    //gameboard width
     public static final int WIDTH = 320;
+    //gameboard height
     public static final int HEIGHT = WIDTH / 12 * 9;
+    //scaling used in adjusting gameboard height
     public static final int SCALE = 2;
+    //game title
     public final String TITLE = "Space Invaders";
+    //initialize menuSong
     private File menuSong = new File("src//sounds//Menu.wav");
+    //default running status
     private boolean running = false;
+    //declare thread
     private Thread thread;
-
+    //initialize BufferedImage
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
-    //space of left and right border
+    //space to the left and right border
     int BORDER_RIGHT = 50;
     int BORDER_LEFT = 5;
     //move down range
@@ -59,7 +65,8 @@ public class Game extends Canvas implements Runnable {
     final int ENEMY_INIT_Y = 0;
     //timer speed delay <- affect enemy speed?
     final int DELAY = 15;
-    private int direction = -1;
+    //enemy default moving speed and direction, positive is right, negative is left
+    private int direction = 2;
     //random number match trigger then enemy shoot
     int trigger;
     //laser width and height
@@ -68,31 +75,41 @@ public class Game extends Canvas implements Runnable {
     //player width and height
     final int PLAYER_WIDTH = 45;
     final int PLAYER_HEIGHT = 40;
-
+    //declare weapon
     private ArrayList<Weapon> w;
+    //status
     private boolean start = true;
     private boolean stop = false;
-
+    //buffTime
     private Instant buffTimeStart;
     private boolean startBuff = false;
-
+    //bullet
     private final int bulletSpeed = 2;
     private int BulletTemSpeed = bulletSpeed;
+    //declare menu
     private Menu menu;
-
+    //player shooting status
     private boolean isShooting = false;
+    //counter for enemy killed
     private int enemyKilled = 0;
+    //initialize buff
     public boolean buff = false;
+    //declare sound path
     String filepathM = "src/sounds/Menu.wav";
     String filepathG = "src/sounds/Game.wav";
-
+    //random number
     private Random r = new Random();
+    //declare weapon
     private Weapon useW;
-
+    //declare timestart
     private Instant timestart;
+    //declare player
     private Player player;
+    //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
+    //declare controller
     public Controller c;
+    //declare bullets
     public LinkedList<Shot> es;
 
     public static enum STATE {
@@ -335,10 +352,10 @@ public class Game extends Canvas implements Runnable {
 
             double x = iterator.next().getX();
             //System.out.println(x);
+            //when enemy reach right border it change moving direction and move down
+            if (x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
 
-            if (x >= WIDTH * SCALE - BORDER_RIGHT && direction != -1) {
-
-                direction = -1;
+                direction = -2;
 
                 var iterator2 = enemyList.getIterator();
 
@@ -348,10 +365,10 @@ public class Game extends Canvas implements Runnable {
                     enemy.setY(enemy.getY() + GO_DOWN);
                 }
             }
+            //when enemy reach left border it change moving direction and move down
+            if (x <= BORDER_LEFT && direction != 2) {
 
-            if (x <= BORDER_LEFT && direction != 1) {
-
-                direction = 1;
+                direction = 2;
 
                 var iterator3 = enemyList.getIterator();
 
@@ -364,7 +381,7 @@ public class Game extends Canvas implements Runnable {
         }
 
         var it = enemyList.getIterator();
-
+        //enemy movement
         while (it.hasNext()) {
 
             Enemy enemy = it.next();
@@ -383,19 +400,20 @@ public class Game extends Canvas implements Runnable {
             // 0-30
             int rand = randomNumber.nextInt(30);
 
-            Enemy.Laser laser = Enemy.getLaser();
-            //when random number match trigger number, enemy shoot
+            Enemy.Laser laser = Enemy.getLaser();          
             //System.out.println("rand :"+ rand);
             //System.out.println("trigger :"+trigger);
             //System.out.println("isVisible :"+Enemy.isVisible());
             //System.out.println("isRemove :"+laser.isRemove());
+            
+            //when random number match trigger number, enemy shoot
             if (rand == trigger && Enemy.isVisible() && laser.isRemove()) {
 
                 laser.setRemove(false);
                 laser.setX(Enemy.getX());
                 laser.setY(Enemy.getY());
             }
-
+            //when laser is outside of the gameboard, remove laser
             if (!laser.isRemove()) {
                 //laser moves 1px 
                 laser.setY(laser.getY() + 1);
@@ -552,6 +570,7 @@ public class Game extends Canvas implements Runnable {
 
     public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
         for (int i = 1; i < enemyList.getLength() + 1; i++) {
+            //either player touch with enemy or enemy inner class laser, return true
             if (p.getBounds().intersects(enemyList.getEntry(i).getBounds()) || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
                 //System.out.println("player bound:" + p.getBounds());
 
@@ -565,13 +584,16 @@ public class Game extends Canvas implements Runnable {
         }
         return false;
     }
-
+    
     public boolean Collision(ArrListWithIteratorInterface<Enemy> enemyList, LinkedList<Shot> es) {
+        //when there's at least 1 shot on the gameboard
         if (!es.isEmpty()) {
             for (int i = 1; i < enemyList.getLength() + 1; i++) {
 
                 for (int j = 0; j < es.size(); j++) {
+                    //if enemy touch bullet, remove both
                     if (enemyList.getEntry(i).getBounds().intersects(es.get(j).getBounds())) {
+                        enemyKilled++;
                         enemyList.remove(i);
                         es.remove(j);
                         return true;
