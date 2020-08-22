@@ -7,7 +7,6 @@ package game.Entity;
 
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Color;
 
 /**
  *
@@ -17,14 +16,11 @@ public abstract class Entity {
 
     double x;
     double y;
-    double dx;
-    double dy;
     Image image;
     protected Rectangle bounds;
     int width;
     int height;
     private boolean visible;
-    Color color;
     boolean isColliding;
     
 
@@ -52,22 +48,6 @@ public abstract class Entity {
         this.y = y;
     }
 
-    public double getDx() {
-        return dx;
-    }
-
-    public void setDx(double dx) {
-        this.dx = dx;
-    }
-
-    public double getDy() {
-        return dy;
-    }
-
-    public void setDy(double dy) {
-        this.dy = dy;
-    }
-
     public Image getImage() {
         return image;
     }
@@ -90,11 +70,11 @@ public abstract class Entity {
         this.visible = visible;
     }
     
-    public Entity(double x, double y, Color color)
+    public Entity(double x, double y)
     {
         this.x = x;
         this.y = y;
-        this.color = color;
+        
     }
     
 

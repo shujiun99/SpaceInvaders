@@ -50,7 +50,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
 
     @Override
     public boolean isEmpty() {
-        if(backIndex == 0){
+        if(backIndex == -1){
             return true;
         }
         return false;

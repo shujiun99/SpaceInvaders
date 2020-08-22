@@ -91,6 +91,10 @@ import java.util.LinkedList;
         public void removeWeapon(Weapon block){
             w.remove(block);
         }
+        
+        public int size(){
+            return waitingW.size();
+        }
          
         public LinkedList getEs(){
             return es;
@@ -105,9 +109,9 @@ import java.util.LinkedList;
             return w.isEmpty();
         }
 
-    public boolean isEmptyWaitingW() {
-        return waitingW.isEmpty();
-    }
+        public boolean isEmptyWaitingW() {
+            return waitingW.isEmpty();
+        }
         
         
     

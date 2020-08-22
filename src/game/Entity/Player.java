@@ -7,7 +7,6 @@ package game.Entity;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import java.awt.Graphics;
 
@@ -17,10 +16,19 @@ import java.awt.Graphics;
  */
 public class Player extends Entity{
     
+    double dx;
+    double dy;
+    Color color;
     ImageIcon life = new ImageIcon("src/images/shipSkinSmall.gif");
     
     public Player() {
         initPlayer();
+    }
+    
+     public Player(double x, double y, Color color) 
+    {
+        super(x, y);
+        this.color = color;
     }
     
     private void initPlayer() {
@@ -57,14 +65,27 @@ public class Player extends Entity{
           y = 430;
   }
   
+  public double getDx() {
+        return dx;
+    }
+
+    public void setDx(double dx) {
+        this.dx = dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
+    public void setDy(double dy) {
+        this.dy = dy;
+    }
+  
   public void lifeDraw(Graphics g)
   {
       life.paintIcon(null, g, (int)this.x, (int)this.y);
   }
   
-  public Player(double x, double y, Color color) 
-    {
-        super(x, y, color);
-    }
+ 
 
 }

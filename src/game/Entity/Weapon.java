@@ -7,6 +7,7 @@ package game.Entity;
 
 import java.awt.Graphics;
 import java.time.Instant;
+import java.util.Random;
 import javax.swing.ImageIcon;
 
 
@@ -28,14 +29,23 @@ public class Weapon extends Entity {
         this.startTime = startTime;
     }
 
-    public Weapon(int speed) {
-        this.speed = speed;
+    public Weapon() {
+        speed = createSpeed();
+    }
+    
+    public int createSpeed(){
+        return getRandomInRange(12, 15);
+    }
+    
+    public int getRandomInRange(int start, int end) {
+        Random r = new Random();
+        return start + r.nextInt(end - start + 1);
     }
     
     public void initWeapon(double x, double y){
         
-        this.width = 40;
-        this.height = 45;
+        width = 40;
+        height = 45;
         
         var playerImg = "src/images/weapon.jpg";
         var ii = new ImageIcon(playerImg);
@@ -43,7 +53,6 @@ public class Weapon extends Entity {
         width = ii.getImage().getWidth(null);
         setImage(ii.getImage());
         
-        //bounds = new Rectangle((int)x,(int)y,height,width);
     }
     
     public void render(Graphics g) {

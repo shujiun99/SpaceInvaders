@@ -79,7 +79,7 @@ public class Game extends Canvas implements Runnable {
     private boolean start = true;
     private boolean stop = false;
     //buffTime
-    private Instant buffTimeStart;
+    private Instant buffUsingTimeStart;
     private boolean startBuff = false;
     //bullet
     private final int bulletSpeed = 2;
@@ -91,14 +91,14 @@ public class Game extends Canvas implements Runnable {
     //counter for enemy killed
     private int enemyKilled = 0;
     //initialize buff
-    public boolean buff = false;
+    public boolean buffIsUsing = false;
     //declare sound path
     String filepathM = "src/sounds/Menu.wav";
     String filepathG = "src/sounds/Game.wav";
     //random number
     private Random r = new Random();
     //declare weapon
-    private Weapon useW;
+    private Weapon usingWeapon;
     //declare timestart
     private Instant timestart;
     //declare player
@@ -341,8 +341,7 @@ public class Game extends Canvas implements Runnable {
             c.tick();
 
             if (Collision(player, w)) {
-                int s = getRandomInRange(12, 15);
-                c.addWeaponW(new Weapon(s));
+                c.addWeaponW(new Weapon());
                 System.out.println("WeaponAdd");
             }
             if (Collision(player, enemyList)) {
@@ -352,26 +351,17 @@ public class Game extends Canvas implements Runnable {
 
             Collision(enemyList, es);
 
-            if (startBuff) {
-                startBuff();
-                startBuff = false;
-            }
-
-            if (buff) {
+            if (buffIsUsing) {
                 Instant endBuffTime = Instant.now();
-                Duration interval = Duration.between(useW.getStartTime(), endBuffTime);
+                Duration interval = Duration.between(usingWeapon.getStartTime(), endBuffTime);
                 if (interval.getSeconds() == 6) {
                     BulletTemSpeed = bulletSpeed;
-                    buff = false;
+                    buffIsUsing = false;
                     System.out.println("Stop Buff");
-                    useW = null;
+                    usingWeapon = null;
                 }
             }
         }
-    }
-
-    public int getRandomInRange(int start, int end) {
-        return start + r.nextInt(end - start + 1);
     }
 
     private void update() {
@@ -521,11 +511,13 @@ public class Game extends Canvas implements Runnable {
                 }
                 if (key == KeyEvent.VK_SPACE && !isShooting) {
                     isShooting = true;
-                    c.addBullet(new Shot(player.getX(), player.getY(), game, c, BulletTemSpeed));
-                } else if (key == KeyEvent.VK_Z && !buff) {
+                    c.addBullet(new Shot(player.getX(), player.getY(), BulletTemSpeed));
+                } else if (key == KeyEvent.VK_Z && !buffIsUsing) {
                     if (!c.isEmptyWaitingW()) {
-                        useW = c.removeWeaponW();
-                        startBuff = true;
+                        System.out.println(c.size()+1);
+                        usingWeapon = c.removeWeaponW();
+                        System.out.println(c.size()+1);
+                        startBuff();
                     }
                 }
             }
@@ -651,10 +643,10 @@ public class Game extends Canvas implements Runnable {
 
     public void startBuff() {
         System.out.println("Start Buff");
-        buffTimeStart = Instant.now();
-        useW.setStartTime(buffTimeStart);
-        BulletTemSpeed = useW.getSpeed();
-        buff = true;
+        buffUsingTimeStart = Instant.now();
+        usingWeapon.setStartTime(buffUsingTimeStart);
+        BulletTemSpeed = usingWeapon.getSpeed();
+        buffIsUsing = true;
     }
 
     public void displayHelp() {

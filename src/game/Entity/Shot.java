@@ -5,8 +5,6 @@
  */
 package game.Entity;
 
-import game.Client.Controller;
-import game.Client.Game;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import javax.swing.ImageIcon;
@@ -17,14 +15,11 @@ import javax.swing.ImageIcon;
  */
 public class Shot extends Entity{
     
-    private Game game;
-    private Controller c;
+    
     private int speed;
     
-    public Shot(double x, double y,Game game,Controller c,int speed){
+    public Shot(double x, double y,int speed){
         initShot(x,y);
-        this.game = game;
-        this.c = c;
         this.speed = speed;
     }
     
@@ -47,15 +42,7 @@ public class Shot extends Entity{
     
     public void tick(){
         y-=speed;
-        /*
-        if(game.Collision(this,game.e)){
-            System.out.println("COLLISION DETECDED");
-            //c.removeBullet(this);
-        }*/
-        /*
-        if(game.Collision(this, game.e)){
-            
-        }*/
+        
     }
 
     public void render(Graphics g) {
