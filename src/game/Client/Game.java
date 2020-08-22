@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -157,6 +158,8 @@ public class Game extends Canvas implements Runnable {
             AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
             Clip clip = AudioSystem.getClip();
             clip.open(audioInput);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
             if (play) {
                 clip.start();
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
