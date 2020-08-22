@@ -31,6 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Game extends Canvas implements Runnable {
+
     //gameboard width
     public static final int WIDTH = 320;
     //gameboard height
@@ -47,7 +48,7 @@ public class Game extends Canvas implements Runnable {
     private Thread thread;
     //initialize BufferedImage
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-    
+
     //space to the left and right border
     int BORDER_RIGHT = 50;
     int BORDER_LEFT = 5;
@@ -112,11 +113,11 @@ public class Game extends Canvas implements Runnable {
     //declare bullets
     public LinkedList<Shot> es;
     public Shot shot;
-    
+
     int numberLives = 3;
     int score = 0;
     int level = 1;
-        
+
     public static enum STATE {
         MENU,
         GAME
@@ -133,15 +134,15 @@ public class Game extends Canvas implements Runnable {
         menu = new Menu();
         es = c.getEs();
         w = c.getW();
-        enemyInit();
+        enemyInit(1, 3);
     }
 
-    private void enemyInit() {
+    private void enemyInit(int row, int column) {
         enemyList = new ArrayListWithIterator<>();
         //row
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < row; i++) {
             //column
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < column; j++) {
                 var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
                         ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT);
                 enemyList.add(enemy);
@@ -207,29 +208,26 @@ public class Game extends Canvas implements Runnable {
 
         if (state == STATE.GAME) {
             g.drawImage(player.getImage(), (int) player.getX(), (int) player.getY(), PLAYER_WIDTH, PLAYER_HEIGHT, this);
-            
+
             c.render(g);
             drawEnemies(g);
             drawLaser(g);
-            
+
             //display player lives
             g.setColor(Color.WHITE);
-            g.drawString("Lives: ",11 ,20);
-            for(int i = 0; i < ship.size(); i++)
-            {
+            g.drawString("Lives: ", 11, 20);
+            for (int i = 0; i < ship.size(); i++) {
                 ship.get(i).lifeDraw(g);
             }
-            
+
             //display player score
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score, 290, 20);
-            
+
             //makes a string that says "+100" on enemy hit
-            
             //show level
             g.setColor(Color.WHITE);
             g.drawString("Level " + level, 590, 20);
-            
 
         } else if (state == STATE.MENU) {
             menu.render(g);
@@ -292,19 +290,18 @@ public class Game extends Canvas implements Runnable {
             now = System.nanoTime();
             delta += (now - lastTime) / timePerTick;
             lastTime = now;
-            
+
             if (delta >= 1) {
                 tick();
                 render();
                 delta--;
                 if (state == STATE.GAME) {
-                    
-                    for(int column = 0; column < numberLives; column++)
-                    {
+
+                    for (int column = 0; column < numberLives; column++) {
                         p = new Player(48 + (column * 20), 10, Color.WHITE);
                         ship.add(p);
                     }
-                    
+
                     update();
                 }
             }
@@ -378,13 +375,13 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
-        
+
         if (enemyList.isEmpty()) {
             ship.clear();
             level += 1;
             run();
         }
-        
+
         var iterator = enemyList.getIterator();
 
         while (iterator.hasNext()) {
@@ -439,12 +436,12 @@ public class Game extends Canvas implements Runnable {
             // 0-30
             int rand = randomNumber.nextInt(30);
 
-            Enemy.Laser laser = Enemy.getLaser();          
+            Enemy.Laser laser = Enemy.getLaser();
             //System.out.println("rand :"+ rand);
             //System.out.println("trigger :"+trigger);
             //System.out.println("isVisible :"+Enemy.isVisible());
             //System.out.println("isRemove :"+laser.isRemove());
-            
+
             //when random number match trigger number, enemy shoot
             if (rand == trigger && Enemy.isVisible() && laser.isRemove()) {
 
@@ -463,8 +460,6 @@ public class Game extends Canvas implements Runnable {
                 }
             }
         });
-        
-        
 
     }
 
@@ -613,24 +608,20 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < enemyList.getLength(); i++) {
             //player touch with enemy or enemy inner class laser, return true
             if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())
-                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()))
-            {
-                return true;              
+                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
+                return true;
                 //System.out.println("player bound:" + p.getBounds());
 
                 //System.out.println("laser bound:" + enemyList.getEntry(i).getLaser().getBounds());
                 //System.out.println("enemy intersect:" + p.getBounds().intersects(enemyList.getEntry(i).getBounds()));
                 //System.out.println("laser intersect:" + p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()));
                 //System.out.println(i);
-                
             }
-            
-           
 
         }
         return false;
     }
-    
+
     public boolean Collision(ArrListWithIteratorInterface<Enemy> enemyList, LinkedList<Shot> es) {
         //when there's at least 1 shot on the gameboard
         if (!es.isEmpty()) {
@@ -644,7 +635,7 @@ public class Game extends Canvas implements Runnable {
                         enemyList.remove(i);
                         es.remove(j);
                         return true;
-                        
+
                     }
                 }
             }
