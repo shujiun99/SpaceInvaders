@@ -19,4 +19,6 @@ public interface QueueInterface<T> {
     public int size();
     
     public boolean isFull();
+    
+    public void clear();
 }

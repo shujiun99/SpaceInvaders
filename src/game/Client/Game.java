@@ -114,6 +114,7 @@ public class Game extends Canvas implements Runnable {
     //declare bullets
     public LinkedList<Shot> es;
     public Shot shot;
+    public static Clip clip;
 
     int numberLives = 3;
     int score = 0;
@@ -151,21 +152,16 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private static void PlaySound(String musicLocation, boolean play) {
+    private static void PlaySound(String musicLocation) {
 
         try {
             File musicPath = new File(musicLocation);
             AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(audioInput);
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
-            if (play) {
-                clip.start();
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            } else {
-                clip.stop();
-            }
+            
 
         } catch (Exception ex) {
 
@@ -285,8 +281,9 @@ public class Game extends Canvas implements Runnable {
 
         if (state != STATE.GAME) {
             render();
-            PlaySound(filepathG, false);
-            PlaySound(filepathM, true);
+            PlaySound(filepathM);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
 
         while (running) {
@@ -513,12 +510,12 @@ public class Game extends Canvas implements Runnable {
                     case KeyEvent.VK_LEFT:
                         player.setDx(-5);
                         break;
-                    /*case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_DOWN:
                         player.setDy(5);
                         break;
                     case KeyEvent.VK_UP:
                         player.setDy(-5);
-                        break;*/
+                        break;
                     default:
                         break;
                 }
@@ -557,26 +554,32 @@ public class Game extends Canvas implements Runnable {
         public void mousePressed(MouseEvent e) {
             int mx = e.getX();
             int my = e.getY();
+            
+            if(Game.state == Game.STATE.MENU){
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                    if (my >= 150 && my <= 200) {
+                        Game.state = Game.state.GAME;
+                        clip.stop();
+                        PlaySound(filepathG);
+                        clip.start();
+                        clip.loop(Clip.LOOP_CONTINUOUSLY);
+                    }
+                }
 
-            if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                if (my >= 150 && my <= 200) {
-                    Game.state = Game.state.GAME;
-                    PlaySound(filepathM, false);
-                    PlaySound(filepathG, true);
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                    if (my >= 250 && my <= 300) {
+                        displayHelp();
+                    }
+                }
+
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                    if (my >= 350 && my <= 400) {
+                        System.exit(1);
+                    }
                 }
             }
 
-            if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                if (my >= 250 && my <= 300) {
-                    displayHelp();
-                }
-            }
-
-            if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                if (my >= 350 && my <= 400) {
-                    System.exit(1);
-                }
-            }
+            
         }
 
         @Override

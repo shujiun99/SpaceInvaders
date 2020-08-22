@@ -5,11 +5,8 @@
  */
 package game.Entity;
 
-import game.Client.Game;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.time.Instant;
-import java.util.Random;
 import javax.swing.ImageIcon;
 
 
@@ -18,7 +15,7 @@ import javax.swing.ImageIcon;
  *
  * @author User
  */
-public class Weapon extends Entity{
+public class Weapon extends Entity {
     
     Instant startTime;
     long endTime;
@@ -68,5 +65,7 @@ public class Weapon extends Entity{
     public int getSpeed() {
         return speed;
     }
+
+    
    
 }

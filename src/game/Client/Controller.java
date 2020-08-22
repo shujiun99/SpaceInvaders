@@ -8,7 +8,6 @@ package game.Client;
 
 import game.ADT.ArrayQueue;
 import game.ADT.QueueInterface;
-import game.Entity.Enemy;
 import game.Entity.Shot;
 import game.Entity.Weapon;
 import java.awt.Graphics;
@@ -65,6 +64,7 @@ import java.util.LinkedList;
              for(int i = 0; i<w.size();i++){
                  tw = w.get(i);
                  tw.render(g);
+                 
              }
          }
          

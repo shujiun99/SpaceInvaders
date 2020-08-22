@@ -67,4 +67,16 @@ public class ArrayQueue<T> implements QueueInterface<T> {
     public int size() {
         return backIndex;
     }
+
+    @Override
+    public void clear() {
+        if(!isEmpty()){
+            for(int i=0; i<backIndex;i++){
+                array[i] = null;
+            }
+            
+            backIndex = -1;
+        }
+    }
+    
 }
