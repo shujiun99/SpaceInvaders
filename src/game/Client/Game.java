@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game.Client;
 
 import game.Entity.Enemy;
@@ -615,7 +610,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
-        for (int i = 1; i < enemyList.getLength() + 1; i++) {
+        for (int i = 0; i < enemyList.getLength(); i++) {
             //player touch with enemy or enemy inner class laser, return true
             if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())
                     || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()))
@@ -639,7 +634,7 @@ public class Game extends Canvas implements Runnable {
     public boolean Collision(ArrListWithIteratorInterface<Enemy> enemyList, LinkedList<Shot> es) {
         //when there's at least 1 shot on the gameboard
         if (!es.isEmpty()) {
-            for (int i = 1; i < enemyList.getLength() + 1; i++) {
+            for (int i = 0; i < enemyList.getLength(); i++) {
 
                 for (int j = 0; j < es.size(); j++) {
                     //if enemy touch bullet, remove both
@@ -649,6 +644,7 @@ public class Game extends Canvas implements Runnable {
                         enemyList.remove(i);
                         es.remove(j);
                         return true;
+                        
                     }
                 }
             }

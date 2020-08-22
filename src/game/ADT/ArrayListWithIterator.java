@@ -1,22 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game.ADT;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- *
- * @author User
- */
-public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterface<Enemy> {
+public class ArrayListWithIterator<ALWIT> implements ArrListWithIteratorInterface<ALWIT> {
 
-    private Enemy[] array;
+    private ALWIT[] array;
     private int length;
-    private static final int DEFAULT_CAPACITY = 25;
+    private static final int DEFAULT_CAPACITY = 30;
 
     public ArrayListWithIterator() {
         this(DEFAULT_CAPACITY);
@@ -26,45 +17,72 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
         length = 0;
         // the cast is safe because the new array contains null entries
         @SuppressWarnings("unchecked")
-        Enemy[] tempList = (Enemy[]) new Object[initialCapacity];
+        ALWIT[] tempList = (ALWIT[]) new Object[initialCapacity];
         array = tempList;
     }
 
     @Override
-    public Iterator<Enemy> getIterator() {
+    public Iterator<ALWIT> getIterator() {
         return new IteratorForArrayList();
     }
 
     @Override
-    public boolean add(Enemy newEntry) {
-        array[length] = newEntry;
-        length++;
-        return true;
+    public boolean add(ALWIT newEntry) {
+        if (!isFull()) {
+            array[length] = newEntry;
+            length++;
+            return true;
+        } else {
+            System.out.println("Array is full");
+            return false;
+        }
     }
 
     @Override
-    public boolean add(int newPosition, Enemy newEntry) {
-        boolean isSuccessful = true;
+    public boolean add(int Position, ALWIT newEntry) {
 
-        if ((newPosition >= 1) && (newPosition <= length + 1)) {
-            if (!isArrayFull()) {
-                makeRoom(newPosition);
-                array[newPosition - 1] = newEntry;
+        if (!isFull()) {
+            if (Position == 0) {
+
+                array[0] = newEntry;
+                for (int i = 1; i < Position; i++) {
+                    array[i] = array[i + 1];
+                }
                 length++;
+                return true;
+            } else if (Position > 0 && Position < DEFAULT_CAPACITY) {
+                if (array[Position] == null) {
+                    array[Position] = newEntry;
+                    length++;
+                    return true;
+                } else {
+                    ALWIT[] tempList = (ALWIT[]) new Object[length];
+                    for (int i = Position; i < length; i++) {
+                        tempList[i] = array[i];
+                    }
+                    length++;
+                    array[Position] = newEntry;
+                    for (int i = Position; i < length - 1; i++) {
+                        array[i + 1] = tempList[i];
+                    }
+                    return true;
+                }
+            } else {
+                System.out.println("Add new Entry failed.");
+                return false;
             }
         } else {
-            isSuccessful = false;
+            System.out.println("No Space to add new Entry.");
+            return false;
         }
-
-        return isSuccessful;
     }
 
     @Override
-    public Enemy remove(int givenPosition) {
-        Enemy result = null;
+    public ALWIT remove(int givenPosition) {
+        ALWIT result = null;
 
-        if ((givenPosition >= 1) && (givenPosition <= length)) {
-            result = array[givenPosition - 1];
+        if ((givenPosition >= 0) && (givenPosition <= length)) {
+            result = array[givenPosition];
 
             if (givenPosition < length) {
                 removeGap(givenPosition);
@@ -82,11 +100,11 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
     }
 
     @Override
-    public boolean replace(int givenPosition, Enemy newEntry) {
+    public boolean replace(int givenPosition, ALWIT newEntry) {
         boolean isSuccessful = true;
 
-        if ((givenPosition >= 1) && (givenPosition <= length)) {
-            array[givenPosition - 1] = newEntry;
+        if ((givenPosition >= 0) && (givenPosition <= length)) {
+            array[givenPosition] = newEntry;
         } else {
             isSuccessful = false;
         }
@@ -95,44 +113,39 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
     }
 
     @Override
-    public Enemy getEntry(int givenPosition) {
-        Enemy result = null;
+    public ALWIT getEntry(int givenPosition) {
+        ALWIT result = null;
 
-        if ((givenPosition >= 1) && (givenPosition <= length)) {
-            result = array[givenPosition - 1];
+        if ((givenPosition >= 0) && (givenPosition <= length)) {
+            result = array[givenPosition];
         }
 
         return result;
     }
 
     @Override
-    public boolean contains(Enemy anEntry) {
+    public boolean contains(ALWIT anEntry) {
         boolean found = false;
         for (int index = 0; !found && (index < length); index++) {
             if (anEntry.equals(array[index])) {
                 found = true;
             }
         }
-
         return found;
     }
 
-    @Override
     public int getLength() {
         return length;
     }
 
-    @Override
     public boolean isEmpty() {
         return length == 0;
     }
 
-    @Override
     public boolean isFull() {
-        return false;
+        return length == DEFAULT_CAPACITY;
     }
 
-    @Override
     public String toString() {
         String outputStr = "";
         for (int index = 0; index < length; ++index) {
@@ -150,6 +163,7 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
      * Task: Makes room for a new entry at newPosition. Precondition: 1 <=
      * newPosition <= length + 1; length is array's length before addition.
      */
+    /*
     private void makeRoom(int newPosition) {
         int newIndex = newPosition - 1;
         int lastIndex = length - 1;
@@ -158,14 +172,14 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
             array[index + 1] = array[index];
         }
     }
-
+     */
     /**
      * Task: Shifts entries that are beyond the entry to be removed to the next
      * lower position. Precondition: array is not empty; 1 <= givenPosition <
      * length; length is array's length before removal.
      */
     private void removeGap(int givenPosition) {
-        int removedIndex = givenPosition - 1;
+        int removedIndex = givenPosition;
         int lastIndex = length - 1;
 
         for (int index = removedIndex; index < lastIndex; index++) {
@@ -173,7 +187,7 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
         }
     }
 
-    private class IteratorForArrayList implements Iterator<Enemy> {
+    private class IteratorForArrayList implements Iterator<ALWIT> {
 
         private int nextIndex;
         private boolean wasNextCalled; // needed by remove
@@ -183,14 +197,16 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
             wasNextCalled = false;
         }
 
+        @Override
         public boolean hasNext() {
             return nextIndex < length;
         }
 
-        public Enemy next() {
+        @Override
+        public ALWIT next() {
             if (hasNext()) {
                 wasNextCalled = true;
-                Enemy nextEntry = array[nextIndex];
+                ALWIT nextEntry = array[nextIndex];
                 nextIndex++; // advance iterator
 
                 return nextEntry;
@@ -200,6 +216,7 @@ public class ArrayListWithIterator<Enemy> implements ArrListWithIteratorInterfac
             }
         }
 
+        @Override
         public void remove() {
             if (wasNextCalled) {
                 // nextIndex was incremented by the call to next, so it 
