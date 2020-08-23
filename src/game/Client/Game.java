@@ -40,10 +40,6 @@ public class Game extends Canvas implements Runnable {
     public static final int HEIGHT = WIDTH / 12 * 9;
     //scaling used in adjusting gameboard height
     public static final int SCALE = 2;
-    //game title
-    public final String TITLE = "Space Invaders";
-    //initialize menuSong
-    private File menuSong = new File("src//sounds//Menu.wav");
     //default running status
     private boolean running = false;
     //declare thread
@@ -93,9 +89,6 @@ public class Game extends Canvas implements Runnable {
     private int enemyKilled = 0;
     //initialize buff
     public boolean buffIsUsing = false;
-    //declare sound path
-    String filepathM = "src/sounds/Menu.wav";
-    String filepathG = "src/sounds/Game.wav";
     //random number
     private Random r = new Random();
     //declare weapon
@@ -153,19 +146,33 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private static void PlaySound(String musicLocation) {
+    private static void PlaySound(String song) {
 
-        try {
-            File musicPath = new File(musicLocation);
-            AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-            clip = AudioSystem.getClip();
-            clip.open(audioInput);
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
+        if(song.equals("menuSong")){
+            try{
+                File musicPath = new File("src/sounds/Menu.wav");
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                clip = AudioSystem.getClip();
+                clip.open(audioInput);
+            }catch(Exception ex){
+                
+            }
+            
+        }
+        
+        if(song.equals("gameSong")){
+            try {
+                File musicPath = new File("src/sounds/Game.wav");
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                clip = AudioSystem.getClip();
+                clip.open(audioInput);
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
             
 
-        } catch (Exception ex) {
+            } catch (Exception ex) {
 
+            }
         }
 
     }
@@ -207,7 +214,7 @@ public class Game extends Canvas implements Runnable {
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
         if (state == STATE.GAME) {
-            g.drawImage(player.getImage(), (int) player.getX(), (int) player.getY(), PLAYER_WIDTH, PLAYER_HEIGHT, this);
+            player.render(g);
 
             c.render(g);
             drawEnemies(g);
@@ -259,7 +266,7 @@ public class Game extends Canvas implements Runnable {
         game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 
-        JFrame frame = new JFrame(game.TITLE);
+        JFrame frame = new JFrame("Space Invaders");
         frame.add(game);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -282,7 +289,7 @@ public class Game extends Canvas implements Runnable {
 
         if (state != STATE.GAME) {
             render();
-            PlaySound(filepathM);
+            PlaySound("menuSong");
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
@@ -312,6 +319,7 @@ public class Game extends Canvas implements Runnable {
                     Instant stopt = Instant.now();
                     Duration tt = Duration.between(timestart, stopt);
                     if (tt.getSeconds() == 6) {
+                        System.out.println("time to create");
                         RandomWeapon();
                         start = true;
                     }
@@ -555,7 +563,7 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 120 && my <= 170) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        PlaySound(filepathG);
+                        PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
@@ -575,7 +583,7 @@ public class Game extends Canvas implements Runnable {
 
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
                     if (my >= 360 && my <= 410) {
-                        System.exit(1);
+                        System.exit(0);
                     }
                 }
             }
@@ -621,19 +629,18 @@ public class Game extends Canvas implements Runnable {
                 ship.remove(index);
             }
             else if(ship.isEmpty()){*/
-                int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", "You lost the game with " + score + " points", 0);
+                //String change = Integer.toString(score);
+                JOptionPane.showMessageDialog(null,"You lost the game with " + score + " points");
                 
-                if(answer == 0)
-                {
                     enemyList.clear();
                     score = 0;
                     level = 1;
+                    c.clear();
+                    clip.stop();
+                    start = true;
+                    Game.state = Game.STATE.MENU;
                     run();
-                }
-                else
-                {
-                    System.exit(0);
-                }
+         
                 return true;
                 //System.out.println("player bound:" + p.getBounds());
 

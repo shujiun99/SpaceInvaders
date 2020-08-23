@@ -68,6 +68,10 @@ public class Player extends Entity{
   public double getDx() {
         return dx;
     }
+  
+    public void render(Graphics g) {
+        g.drawImage(image, (int)x, (int)y, height,width,null);
+    }
 
     public void setDx(double dx) {
         this.dx = dx;

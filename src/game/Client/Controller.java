@@ -24,7 +24,7 @@ import java.util.LinkedList;
          public LinkedList<Shot> es = new LinkedList<Shot>();
          public ArrayList<Weapon> w = new ArrayList<Weapon>();
         public QueueInterface<Weapon> waitingW = new ArrayQueue<Weapon>();
-        
+        public QueueInterface<Weapon> weapon = new ArrayQueue<Weapon>();
          
          Shot ts;
          Game game;
@@ -92,12 +92,24 @@ import java.util.LinkedList;
             w.remove(block);
         }
         
+        public void addWeaponS(Weapon block){
+            weapon.enqueue(block);
+        }
+        
+        public Weapon removeWeaponS(){
+            return weapon.dequeue();
+        }
+        
         public int size(){
             return waitingW.size();
         }
          
         public LinkedList getEs(){
             return es;
+        }
+        
+        public void clear(){
+            waitingW.clear();
         }
          
          

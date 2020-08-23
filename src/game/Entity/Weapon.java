@@ -21,6 +21,7 @@ public class Weapon extends Entity {
     Instant startTime;
     long endTime;
     int speed;
+    int usingTime = 6;
     
     public Weapon(double x, double y,Instant startTime){
         initWeapon(x,y);
@@ -73,6 +74,14 @@ public class Weapon extends Entity {
 
     public int getSpeed() {
         return speed;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public int getUsingTime() {
+        return usingTime;
     }
 
     

@@ -65,7 +65,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
 
     @Override
     public int size() {
-        return backIndex;
+        return backIndex+1;
     }
 
     @Override
@@ -77,6 +77,15 @@ public class ArrayQueue<T> implements QueueInterface<T> {
             
             backIndex = -1;
         }
+    }
+
+    @Override
+    public T getFront() {
+        T front = null;
+        if(!isEmpty()){
+            front = array[frontIndex];
+        }
+        return front;
     }
     
 }
