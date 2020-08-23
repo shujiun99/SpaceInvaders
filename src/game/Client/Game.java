@@ -580,7 +580,7 @@ public class Game extends Canvas implements Runnable {
                 }
                 
                 if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
-                    if(my >= 200 && my <= 250){
+                    if(my >= 180 && my <= 230){
                         //displayLevel()
                     Game.state = Game.state.LVLMENU;
                     displayLevel();
@@ -589,18 +589,18 @@ public class Game extends Canvas implements Runnable {
                 }
                 
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 280 && my <= 330) {
+                    if (my >= 240 && my <= 290) {
                         displayScore();
                     }
                 }
 
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 360 && my <= 410) {
+                    if (my >= 300 && my <= 350) {
                         displayHelp();
                     }
                 }
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 440 && my <= 490) {
+                    if (my >= 360 && my <= 410) {
                         System.exit(1);
                     }
                 }
