@@ -551,7 +551,7 @@ public class Game extends Canvas implements Runnable {
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
+       public void mousePressed(MouseEvent e) {
             int mx = e.getX();
             int my = e.getY();
             
@@ -560,7 +560,7 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 120 && my <= 170) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        PlaySound("gameSong");
+                        PlaySound(filepathG);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
@@ -568,26 +568,64 @@ public class Game extends Canvas implements Runnable {
                 
                 if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
                     if(my >= 200 && my <= 250){
+                        //displayLevel()
+                    Game.state = Game.state.LVLMENU;
+                    displayLevel();
+                    
+                    }
+                }
+                
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                    if (my >= 280 && my <= 330) {
                         displayScore();
                     }
                 }
 
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 280 && my <= 330) {
+                    if (my >= 360 && my <= 410) {
                         displayHelp();
                     }
                 }
-
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 360 && my <= 410) {
-                        System.exit(0);
+                    if (my >= 440 && my <= 490) {
+                        System.exit(1);
                     }
                 }
+            }
+            else if(Game.state == Game.state.LVLMENU)
+            {
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                if (my >= 150 && my <= 200) {
+                    Game.state = Game.state.GAME;
+                    level = 1;
+                    PlaySound(filepathG);
+                        clip.start();
+                        clip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+            }
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                if (my >= 250 && my <= 300) {
+                    Game.state = Game.state.GAME;
+                    level = 2;
+                    PlaySound(filepathG);
+                        clip.start();
+                        clip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+            }
+                
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                if (my >= 350 && my <= 400) {
+                    Game.state = Game.state.GAME;
+                    level = 3;
+                    PlaySound(filepathG);
+                        clip.start();
+                        clip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+            }
             }
 
             
         }
-
         @Override
         public void mouseReleased(MouseEvent e) {
 
@@ -691,6 +729,21 @@ public class Game extends Canvas implements Runnable {
         usingWeapon.setStartTime(buffUsingTimeStart);
         BulletTemSpeed = usingWeapon.getSpeed();
         buffIsUsing = true;
+    }
+    
+     public void displayLevel()
+    {
+     Game game = new Game();
+
+        game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+        game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+        game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+
+      JFrame frame = new JFrame(game.TITLE); 
+        frame.pack();
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(false);
     }
 
     public void displayHelp() {
