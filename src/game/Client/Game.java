@@ -113,7 +113,8 @@ public class Game extends Canvas implements Runnable {
 
     public static enum STATE {
         MENU,
-        GAME
+        GAME,
+        LVLMENU
     };
 
     public static STATE state = STATE.MENU;
@@ -125,6 +126,7 @@ public class Game extends Canvas implements Runnable {
         addMouseListener(new MouseInput(this));
         c = new Controller(this);
         menu = new Menu();
+        lvlmenu = new LevelMenu();
         es = c.getEs();
         w = c.getW();
         enemyInit(1, 3);
@@ -235,6 +237,10 @@ public class Game extends Canvas implements Runnable {
 
         } else if (state == STATE.MENU) {
             menu.render(g);
+        }
+        else if (state == STATE.LVLMENU)
+        {
+          lvlmenu.levelMenu(g);
         }
 
         g.dispose();
