@@ -24,17 +24,17 @@ public class LevelMenu {
         
         Font fnt1 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt1);
-        g.drawString("Level 1", beginnerButton.x + 19, beginnerButton.y + 30);
+        g.drawString("Level 1", beginnerButton.x + 25, beginnerButton.y + 36);
         g2d.draw(beginnerButton);
         
         Font fnt2 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt2);
-        g.drawString("Level 2", normalButton.x + 19, normalButton.y + 30);
+        g.drawString("Level 2", normalButton.x + 25, normalButton.y + 36);
         g2d.draw(normalButton);
         
         Font fnt3 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt3);
-        g.drawString("Level 3", intermediateButton.x + 19, intermediateButton.y + 30);
+        g.drawString("Level 3", intermediateButton.x + 25, intermediateButton.y + 36);
         g2d.draw(intermediateButton);
         
         String img = "src/images/menu.png";
