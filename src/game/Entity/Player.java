@@ -81,10 +81,10 @@ public class Player extends Entity{
         this.dy = dy;
     }
   
-  public void lifeDraw(Graphics g)
+  /*public void lifeDraw(Graphics g)
   {
       life.paintIcon(null, g, (int)this.x, (int)this.y);
-  }
+  }*/
   
  
 
