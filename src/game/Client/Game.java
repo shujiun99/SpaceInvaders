@@ -30,6 +30,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class Game extends Canvas implements Runnable {
 
@@ -41,7 +42,9 @@ public class Game extends Canvas implements Runnable {
     public static final int SCALE = 2;
     //game title
     public final String TITLE = "Space Invaders";
-    //default running statuszXX
+    //initialize menuSong
+    private File menuSong = new File("src//sounds//Menu.wav");
+    //default running status
     private boolean running = false;
     //declare thread
     private Thread thread;
@@ -90,19 +93,23 @@ public class Game extends Canvas implements Runnable {
     private int enemyKilled = 0;
     //initialize buff
     public boolean buffIsUsing = false;
+    //declare sound path
+    String filepathM = "src/sounds/Menu.wav";
+    String filepathG = "src/sounds/Game.wav";
     //random number
-    private Random randomNum = new Random();
+    private Random r = new Random();
     //declare weapon
     private Weapon usingWeapon;
     //declare timestart
     private Instant timestart;
     //declare player
     private Player player;
-    private Player p;
+    private Player playerShip;
     private ArrayList<Player> ship = new ArrayList();
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
     private ArrayList<Enemy> enemy = new ArrayList();
+    private Enemy en;
     //declare controller
     public Controller c;
     //declare bullets
@@ -146,36 +153,20 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private static void PlaySound(String song) {
-        
-        if(song.equals("menuSong")){
-            try{
-                File musicPath = new File("src/sounds/Menu.wav");
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                clip = AudioSystem.getClip();
-                clip.open(audioInput);
-            }catch(Exception ex){
-                
-            }
-            
-        }
-        
-        if(song.equals("gameSong")){
-            try {
-                File musicPath = new File("src/sounds/Game.wav");
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                clip = AudioSystem.getClip();
-                clip.open(audioInput);
-                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
+    private static void PlaySound(String musicLocation) {
+
+        try {
+            File musicPath = new File(musicLocation);
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+            clip = AudioSystem.getClip();
+            clip.open(audioInput);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
             
 
-            } catch (Exception ex) {
+        } catch (Exception ex) {
 
-            }
         }
-
-        
 
     }
 
@@ -223,11 +214,11 @@ public class Game extends Canvas implements Runnable {
             drawLaser(g);
 
             //display player lives
-            g.setColor(Color.WHITE);
+            /*g.setColor(Color.WHITE);
             g.drawString("Lives: ", 11, 20);
             for (int i = 0; i < ship.size(); i++) {
                 ship.get(i).lifeDraw(g);
-            }
+            }*/
 
             //display player score
             g.setColor(Color.WHITE);
@@ -255,8 +246,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void RandomWeapon() {
-        double x = randomNum.nextInt(Game.WIDTH * Game.SCALE);
-        double y = randomNum.nextInt(Game.WIDTH * Game.SCALE);
+        double x = r.nextInt(Game.WIDTH * Game.SCALE);
+        double y = r.nextInt(Game.WIDTH * Game.SCALE);
         Instant time = Instant.now();
         c.addWeapon(new Weapon(x, y, time));
     }
@@ -291,7 +282,7 @@ public class Game extends Canvas implements Runnable {
 
         if (state != STATE.GAME) {
             render();
-            PlaySound("menuSong");
+            PlaySound(filepathM);
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
@@ -306,11 +297,6 @@ public class Game extends Canvas implements Runnable {
                 render();
                 delta--;
                 if (state == STATE.GAME) {
-
-                    for (int column = 0; column < numberLives; column++) {
-                        p = new Player(48 + (column * 20), 10, Color.WHITE);
-                        ship.add(p);
-                    }
 
                     update();
                 }
@@ -349,15 +335,22 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         if (state == STATE.GAME) {
             c.tick();
+            
+            for (int column = 0; column < numberLives; column++) {
+                        playerShip = new Player(48 + (column * 20), 10, Color.WHITE);
+                        ship.add(playerShip);
+                    }
+
 
             if (Collision(player, w)) {
                 c.addWeaponW(new Weapon());
                 System.out.println("WeaponAdd");
             }
-            if (Collision(player, enemyList)) {
+            Collision(player, enemyList);
                 //System.out.println("debug");
-                stop();
-            }
+                //stop();
+                
+         
 
             Collision(enemyList, es);
 
@@ -562,7 +555,7 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 150 && my <= 200) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        PlaySound("gameSong");
+                        PlaySound(filepathG);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
@@ -617,6 +610,24 @@ public class Game extends Canvas implements Runnable {
             //player touch with enemy or enemy inner class laser, return true
             if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())
                     || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
+                
+                /*int index = ship.size() - 1;
+                ship.remove(index);
+            }
+            else if(ship.isEmpty()){*/
+                int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", "You lost the game with " + score + " points", 0);
+                
+                if(answer == 0)
+                {
+                    enemyList.clear();
+                    score = 0;
+                    level = 1;
+                    run();
+                }
+                else
+                {
+                    System.exit(0);
+                }
                 return true;
                 //System.out.println("player bound:" + p.getBounds());
 
@@ -625,8 +636,8 @@ public class Game extends Canvas implements Runnable {
                 //System.out.println("laser intersect:" + p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()));
                 //System.out.println(i);
             }
-
-        }
+            }
+        
         return false;
     }
 
@@ -691,5 +702,4 @@ public class Game extends Canvas implements Runnable {
             }
         });
     }
-    
 }
