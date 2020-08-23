@@ -67,9 +67,6 @@ public class Game extends Canvas implements Runnable {
     //laser width and height
     final int LASER_HEIGHT = 10;
     final int LASER_WIDTH = 5;
-    //player width and height
-    final int PLAYER_WIDTH = 45;
-    final int PLAYER_HEIGHT = 40;
     //declare weapon
     private ArrayList<Weapon> w;
     //status
