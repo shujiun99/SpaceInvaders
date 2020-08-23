@@ -552,7 +552,7 @@ public class Game extends Canvas implements Runnable {
             
             if(Game.state == Game.STATE.MENU){
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 150 && my <= 200) {
+                    if (my >= 120 && my <= 170) {
                         Game.state = Game.state.GAME;
                         clip.stop();
                         PlaySound(filepathG);
@@ -560,15 +560,21 @@ public class Game extends Canvas implements Runnable {
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
                 }
+                
+                if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
+                    if(my >= 200 && my <= 250){
+                        displayScore();
+                    }
+                }
 
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 250 && my <= 300) {
+                    if (my >= 280 && my <= 330) {
                         displayHelp();
                     }
                 }
 
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                    if (my >= 350 && my <= 400) {
+                    if (my >= 360 && my <= 410) {
                         System.exit(1);
                     }
                 }
@@ -701,5 +707,13 @@ public class Game extends Canvas implements Runnable {
                 //System.out.println(laser.getBounds());
             }
         });
+    }
+    
+    private void displayScore() {
+    JFrame scoreFrame = new JFrame();
+    scoreFrame.setSize(630, 500);
+    scoreFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    scoreFrame.setLocationRelativeTo(null);
+    scoreFrame.setVisible(true); 
     }
 }
