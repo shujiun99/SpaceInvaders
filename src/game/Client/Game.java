@@ -350,7 +350,7 @@ public class Game extends Canvas implements Runnable {
                 //System.out.println("debug");
                 //stop();
                 
-         
+            Collision(es, w);
 
             Collision(enemyList, es);
 
@@ -606,6 +606,19 @@ public class Game extends Canvas implements Runnable {
                 System.out.println("Weapon Detected");
                 c.removeWeapon((Weapon) c.getW().get(i));
                 return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean Collision(LinkedList<Shot> es, ArrayList<Weapon> w) {
+        
+        for (int i = 0; i < w.size(); i++) {
+            for(int j=0; j<es.size();j++){
+            if (es.get(j).getBounds().intersects(w.get(i).getBounds())) {
+                c.removeWeapon((Weapon) c.getW().get(i));
+                return true;
+            }
             }
         }
         return false;
