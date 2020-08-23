@@ -19,8 +19,9 @@ import javax.swing.ImageIcon;
 public class Menu {
     
     public Rectangle playButton = new Rectangle(Game.WIDTH / 2 + 120, 120, 100, 50);
-    public Rectangle scoreButton = new Rectangle(Game.WIDTH / 2 + 120, 200, 100, 50);
-    public Rectangle helpButton = new Rectangle(Game.WIDTH / 2 + 120, 280, 100, 50);
+    public Rectangle lvlButton = new Rectangle(Game.WIDTH / 2 + 120, 180, 100, 50);
+    public Rectangle scoreButton = new Rectangle(Game.WIDTH / 2 + 120, 240, 100, 50);
+    public Rectangle helpButton = new Rectangle(Game.WIDTH / 2 + 120, 300, 100, 50);
     public Rectangle exitButton = new Rectangle(Game.WIDTH / 2 + 120, 360, 100, 50);
     
     public void render(Graphics g){
@@ -34,22 +35,27 @@ public class Menu {
         
         Font fnt1 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt1);
-        g.drawString("Play", playButton.x + 19, playButton.y + 30);
+        g.drawString("Play", playButton.x + 19, playButton.y + 35);
         g2d.draw(playButton);
         
         Font fnt2 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt2);
-        g.drawString("Score", scoreButton.x + 10, scoreButton.y + 30);
-        g2d.draw(scoreButton);
+        g.drawString("Level", lvlButton.x + 12, lvlButton.y + 36);
+        g2d.draw(lvlButton);
         
         Font fnt3 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt3);
-        g.drawString("Help", helpButton.x + 19, helpButton.y + 30);
-        g2d.draw(helpButton);
+        g.drawString("Score", scoreButton.x + 9, scoreButton.y + 35);
+        g2d.draw(scoreButton);
         
         Font fnt4 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt4);
-        g.drawString("Exit", exitButton.x + 19, exitButton.y + 30);
+        g.drawString("Help", helpButton.x + 19, helpButton.y + 35);
+        g2d.draw(helpButton);
+        
+        Font fnt5 = new Font("arial", Font.BOLD, 30);
+        g.setFont(fnt5);
+        g.drawString("Exit", exitButton.x + 21, exitButton.y + 35);
         g2d.draw(exitButton);
         
         
