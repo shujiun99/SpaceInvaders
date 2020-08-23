@@ -40,10 +40,12 @@ public class Game extends Canvas implements Runnable {
     public static final int HEIGHT = WIDTH / 12 * 9;
     //scaling used in adjusting gameboard height
     public static final int SCALE = 2;
+    //game title
+    public final String TITLE = "Space Invaders";
+    //initialize menuSong
+    private File menuSong = new File("src//sounds//Menu.wav");
     //default running status
     private boolean running = false;
-    //title
-    public final String TITLE = "Space Invaders";
     //declare thread
     private Thread thread;
     //initialize BufferedImage
@@ -69,6 +71,9 @@ public class Game extends Canvas implements Runnable {
     //laser width and height
     final int LASER_HEIGHT = 10;
     final int LASER_WIDTH = 5;
+    //player width and height
+    final int PLAYER_WIDTH = 45;
+    final int PLAYER_HEIGHT = 40;
     //declare weapon
     private ArrayList<Weapon> w;
     //status
@@ -82,7 +87,7 @@ public class Game extends Canvas implements Runnable {
     private int BulletTemSpeed = bulletSpeed;
     //declare menu
     private Menu menu;
-    //declare lvl menu
+    //declare level menu
     private LevelMenu lvlmenu;
     //player shooting status
     private boolean isShooting = false;
@@ -90,6 +95,9 @@ public class Game extends Canvas implements Runnable {
     private int enemyKilled = 0;
     //initialize buff
     public boolean buffIsUsing = false;
+    //declare sound path
+    String filepathM = "src/sounds/Menu.wav";
+    String filepathG = "src/sounds/Game.wav";
     //random number
     private Random r = new Random();
     //declare weapon
@@ -110,9 +118,6 @@ public class Game extends Canvas implements Runnable {
     public LinkedList<Shot> es;
     public Shot shot;
     public static Clip clip;
-    //declare sound path
-    String filepathM = "src/sounds/Menu.wav";
-    String filepathG = "src/sounds/Game.wav";
 
     int numberLives = 3;
     int score = 0;
@@ -152,33 +157,19 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private static void PlaySound(String song) {
+    private static void PlaySound(String musicLocation) {
 
-        if(song.equals("menuSong")){
-            try{
-                File musicPath = new File("src/sounds/Menu.wav");
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                clip = AudioSystem.getClip();
-                clip.open(audioInput);
-            }catch(Exception ex){
-                
-            }
-            
-        }
-        
-        if(song.equals("gameSong")){
-            try {
-                File musicPath = new File("src/sounds/Game.wav");
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                clip = AudioSystem.getClip();
-                clip.open(audioInput);
-                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
+        try {
+            File musicPath = new File(musicLocation);
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+            clip = AudioSystem.getClip();
+            clip.open(audioInput);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
             
 
-            } catch (Exception ex) {
+        } catch (Exception ex) {
 
-            }
         }
 
     }
@@ -220,7 +211,7 @@ public class Game extends Canvas implements Runnable {
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
         if (state == STATE.GAME) {
-            player.render(g);
+            g.drawImage(player.getImage(), (int) player.getX(), (int) player.getY(), PLAYER_WIDTH, PLAYER_HEIGHT, this);
 
             c.render(g);
             drawEnemies(g);
@@ -276,7 +267,7 @@ public class Game extends Canvas implements Runnable {
         game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 
-        JFrame frame = new JFrame("Space Invaders");
+        JFrame frame = new JFrame(game.TITLE);
         frame.add(game);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -299,7 +290,7 @@ public class Game extends Canvas implements Runnable {
 
         if (state != STATE.GAME) {
             render();
-            PlaySound("menuSong");
+            PlaySound(filepathM);
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
@@ -329,7 +320,6 @@ public class Game extends Canvas implements Runnable {
                     Instant stopt = Instant.now();
                     Duration tt = Duration.between(timestart, stopt);
                     if (tt.getSeconds() == 6) {
-                        System.out.println("time to create");
                         RandomWeapon();
                         start = true;
                     }
@@ -564,7 +554,7 @@ public class Game extends Canvas implements Runnable {
         }
 
         @Override
-       public void mousePressed(MouseEvent e) {
+        public void mousePressed(MouseEvent e) {
             int mx = e.getX();
             int my = e.getY();
             
@@ -639,6 +629,7 @@ public class Game extends Canvas implements Runnable {
 
             
         }
+
         @Override
         public void mouseReleased(MouseEvent e) {
 
@@ -690,18 +681,19 @@ public class Game extends Canvas implements Runnable {
                 ship.remove(index);
             }
             else if(ship.isEmpty()){*/
-                //String change = Integer.toString(score);
-                JOptionPane.showMessageDialog(null,"You lost the game with " + score + " points");
+                int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", "You lost the game with " + score + " points", 0);
                 
+                if(answer == 0)
+                {
                     enemyList.clear();
                     score = 0;
                     level = 1;
-                    c.clear();
-                    clip.stop();
-                    start = true;
-                    Game.state = Game.STATE.MENU;
                     run();
-         
+                }
+                else
+                {
+                    System.exit(0);
+                }
                 return true;
                 //System.out.println("player bound:" + p.getBounds());
 
@@ -744,7 +736,7 @@ public class Game extends Canvas implements Runnable {
         buffIsUsing = true;
     }
     
-     public void displayLevel()
+    public void displayLevel()
     {
      Game game = new Game();
 
