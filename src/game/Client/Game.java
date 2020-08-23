@@ -41,9 +41,7 @@ public class Game extends Canvas implements Runnable {
     public static final int SCALE = 2;
     //game title
     public final String TITLE = "Space Invaders";
-    //initialize menuSong
-    private File menuSong = new File("src//sounds//Menu.wav");
-    //default running status
+    //default running statuszXX
     private boolean running = false;
     //declare thread
     private Thread thread;
@@ -92,11 +90,8 @@ public class Game extends Canvas implements Runnable {
     private int enemyKilled = 0;
     //initialize buff
     public boolean buffIsUsing = false;
-    //declare sound path
-    String filepathM = "src/sounds/Menu.wav";
-    String filepathG = "src/sounds/Game.wav";
     //random number
-    private Random r = new Random();
+    private Random randomNum = new Random();
     //declare weapon
     private Weapon usingWeapon;
     //declare timestart
@@ -108,7 +103,6 @@ public class Game extends Canvas implements Runnable {
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
     private ArrayList<Enemy> enemy = new ArrayList();
-    private Enemy en;
     //declare controller
     public Controller c;
     //declare bullets
@@ -152,20 +146,36 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private static void PlaySound(String musicLocation) {
-
-        try {
-            File musicPath = new File(musicLocation);
-            AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-            clip = AudioSystem.getClip();
-            clip.open(audioInput);
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
+    private static void PlaySound(String song) {
+        
+        if(song.equals("menuSong")){
+            try{
+                File musicPath = new File("src/sounds/Menu.wav");
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                clip = AudioSystem.getClip();
+                clip.open(audioInput);
+            }catch(Exception ex){
+                
+            }
+            
+        }
+        
+        if(song.equals("gameSong")){
+            try {
+                File musicPath = new File("src/sounds/Game.wav");
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                clip = AudioSystem.getClip();
+                clip.open(audioInput);
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
             
 
-        } catch (Exception ex) {
+            } catch (Exception ex) {
 
+            }
         }
+
+        
 
     }
 
@@ -245,8 +255,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void RandomWeapon() {
-        double x = r.nextInt(Game.WIDTH * Game.SCALE);
-        double y = r.nextInt(Game.WIDTH * Game.SCALE);
+        double x = randomNum.nextInt(Game.WIDTH * Game.SCALE);
+        double y = randomNum.nextInt(Game.WIDTH * Game.SCALE);
         Instant time = Instant.now();
         c.addWeapon(new Weapon(x, y, time));
     }
@@ -281,7 +291,7 @@ public class Game extends Canvas implements Runnable {
 
         if (state != STATE.GAME) {
             render();
-            PlaySound(filepathM);
+            PlaySound("menuSong");
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
@@ -552,7 +562,7 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 150 && my <= 200) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        PlaySound(filepathG);
+                        PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
@@ -681,4 +691,5 @@ public class Game extends Canvas implements Runnable {
             }
         });
     }
+    
 }
