@@ -42,6 +42,8 @@ public class Game extends Canvas implements Runnable {
     public static final int SCALE = 2;
     //default running status
     private boolean running = false;
+    //title
+    public final String TITLE = "Space Invaders";
     //declare thread
     private Thread thread;
     //initialize BufferedImage
@@ -80,6 +82,8 @@ public class Game extends Canvas implements Runnable {
     private int BulletTemSpeed = bulletSpeed;
     //declare menu
     private Menu menu;
+    //declare lvl menu
+    private LevelMenu lvlmenu;
     //player shooting status
     private boolean isShooting = false;
     //counter for enemy killed
@@ -106,6 +110,9 @@ public class Game extends Canvas implements Runnable {
     public LinkedList<Shot> es;
     public Shot shot;
     public static Clip clip;
+    //declare sound path
+    String filepathM = "src/sounds/Menu.wav";
+    String filepathG = "src/sounds/Game.wav";
 
     int numberLives = 3;
     int score = 0;
