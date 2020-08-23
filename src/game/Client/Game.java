@@ -382,6 +382,24 @@ public class Game extends Canvas implements Runnable {
             level += 1;
             run();
         }
+        
+        if(level == 4)
+        {
+            int answer = JOptionPane.showConfirmDialog(null, "You win the game with" + score +" points! Would you like to play again??", "You WON!!!!", 0);
+                
+                if(answer == 0)
+                {
+                    enemyList.clear();
+                    score = 0;
+                    level = 1;
+                    run();
+                }
+                else
+                {
+                    System.exit(0);
+                }
+                
+        }
 
         var iterator = enemyList.getIterator();
 
