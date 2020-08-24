@@ -141,7 +141,7 @@ public class Game extends Canvas implements Runnable {
         lvlmenu = new LevelMenu();
         es = c.getEs();
         w = c.getW();
-        enemyInit(1, 3);
+        enemyInit(level, 2 + level);
     }
 
     private void enemyInit(int row, int column) {
