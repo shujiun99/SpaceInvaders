@@ -43,12 +43,12 @@ public class ArrayListWithIterator<ALWIT> implements ArrListWithIteratorInterfac
 
         if (!isFull()) {
             if (Position == 0) {
-
-                array[0] = newEntry;
-                for (int i = 1; i < Position; i++) {
-                    array[i] = array[i + 1];
-                }
                 length++;
+
+                for (int i = length; i > Position; i--) {
+                    array[i] = array[i - 1];
+                }
+                array[0] = newEntry;
                 return true;
             } else if (Position > 0 && Position < DEFAULT_CAPACITY) {
                 if (array[Position] == null) {
@@ -56,15 +56,11 @@ public class ArrayListWithIterator<ALWIT> implements ArrListWithIteratorInterfac
                     length++;
                     return true;
                 } else {
-                    ALWIT[] tempList = (ALWIT[]) new Object[length];
-                    for (int i = Position; i < length; i++) {
-                        tempList[i] = array[i];
-                    }
                     length++;
-                    array[Position] = newEntry;
-                    for (int i = Position; i < length - 1; i++) {
-                        array[i + 1] = tempList[i];
+                    for (int i = length; i > Position; i--) {
+                        array[i] = array[i - 1];
                     }
+                    array[Position] = newEntry;
                     return true;
                 }
             } else {

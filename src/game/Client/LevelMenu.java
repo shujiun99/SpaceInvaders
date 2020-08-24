@@ -10,8 +10,9 @@ import javax.swing.ImageIcon;
 
 public class LevelMenu {
     public Rectangle beginnerButton = new Rectangle(Game.WIDTH /2 + 100, 150, 150, 50);
-    public Rectangle normalButton = new Rectangle(Game.WIDTH /2 + 100, 250, 150, 50);
-    public Rectangle intermediateButton = new Rectangle(Game.WIDTH /2 + 100, 350, 150, 50);
+    public Rectangle normalButton = new Rectangle(Game.WIDTH /2 + 100, 220, 150, 50);
+    public Rectangle intermediateButton = new Rectangle(Game.WIDTH /2 + 100, 290, 150, 50);
+    public Rectangle bonusButton = new Rectangle(Game.WIDTH /2 + 100, 360, 150, 50);
     
     public void levelMenu(Graphics g){
         
@@ -36,6 +37,11 @@ public class LevelMenu {
         g.setFont(fnt3);
         g.drawString("Level 3", intermediateButton.x + 25, intermediateButton.y + 36);
         g2d.draw(intermediateButton);
+        
+        Font fnt4 = new Font("arial", Font.BOLD, 30);
+        g.setFont(fnt4);
+        g.drawString("Bonus", bonusButton.x + 25, bonusButton.y + 36);
+        g2d.draw(bonusButton);
         
         String img = "src/images/menu.png";
         ImageIcon icon = new ImageIcon(img);

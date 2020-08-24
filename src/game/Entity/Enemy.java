@@ -15,11 +15,11 @@ public class Enemy extends Entity {
         return laser;
     }
 
-    public Enemy(int x, int y, int width, int height, int laser_width, int laser_height) {
-        initEnemy(x, y, width, height, laser_width, laser_height);
+    public Enemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
+        initEnemy(x, y, width, height, laser_width, laser_height, imgPath);
     }
 
-    private void initEnemy(int x, int y, int width, int height, int laser_width, int laser_height) {
+    private void initEnemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
 
         this.x = x;
         this.y = y;
@@ -28,7 +28,7 @@ public class Enemy extends Entity {
 
         laser = new Laser(x, y, laser_width, laser_height);
 
-        var EnemyImg = "src/images/enemy.jpg";
+        var EnemyImg = imgPath;
         var imageIcon = new ImageIcon(EnemyImg);
 
         setImage(imageIcon.getImage());
@@ -63,8 +63,8 @@ public class Enemy extends Entity {
             this.width=width;
             this.height=height;
 
-            var bombImg = "src/images/laser.png";
-            var ii = new ImageIcon(bombImg);
+            var LaserImg = "src/images/laser.png";
+            var ii = new ImageIcon(LaserImg);
             setImage(ii.getImage());
         }
     }

@@ -110,8 +110,9 @@ public class Game extends Canvas implements Runnable {
     private ArrayList<Player> ship = new ArrayList();
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
-    private ArrayList<Enemy> enemy = new ArrayList();
-    private Enemy en;
+    private String[] enemyPath = {"src/images/enemy.jpg", "src/images/enemyCyan.jpg", "src/images/enemyGreen.jpg",
+        "src/images/enemyPurple.jpg", "src/images/enemyRed.jpg"};
+
     //declare controller
     public Controller c;
     //declare bullets
@@ -122,6 +123,7 @@ public class Game extends Canvas implements Runnable {
     int numberLives = 3;
     int score = 0;
     int level = 1;
+    int bonus = 0;
 
     public static enum STATE {
         MENU,
@@ -141,20 +143,41 @@ public class Game extends Canvas implements Runnable {
         lvlmenu = new LevelMenu();
         es = c.getEs();
         w = c.getW();
-        enemyInit(level, 2 + level);
+        /*
+        bonus stage is level -2, t
+         */
+        if (level == -2) {
+            enemyInit(5, 4);
+        } else {
+            enemyInit(level, 2 + level);
+        }
     }
 
     private void enemyInit(int row, int column) {
         enemyList = new ArrayListWithIterator<>();
-        //row
-        for (int i = 0; i < row; i++) {
-            //column
-            for (int j = 0; j < column; j++) {
-                var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
-                        ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT);
-                enemyList.add(enemy);
+        if (level == -2) {
+            //row
+            for (int i = 0; i < row; i++) {
+                //column
+                for (int j = 0; j < column; j++) {
+                    var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
+                            ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT, enemyPath[i]);
+                    enemyList.add(enemy);
+                }
+            }
+
+        } else {
+            //row
+            for (int i = 0; i < row; i++) {
+                //column
+                for (int j = 0; j < column; j++) {
+                    var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
+                            ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT, enemyPath[0]);
+                    enemyList.add(enemy);
+                }
             }
         }
+
     }
 
     private static void PlaySound(String musicLocation) {
@@ -166,7 +189,6 @@ public class Game extends Canvas implements Runnable {
             clip.open(audioInput);
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
-            
 
         } catch (Exception ex) {
 
@@ -223,7 +245,6 @@ public class Game extends Canvas implements Runnable {
             for (int i = 0; i < ship.size(); i++) {
                 ship.get(i).lifeDraw(g);
             }*/
-
             //display player score
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score, 290, 20);
@@ -235,10 +256,8 @@ public class Game extends Canvas implements Runnable {
 
         } else if (state == STATE.MENU) {
             menu.render(g);
-        }
-        else if (state == STATE.LVLMENU)
-        {
-          lvlmenu.levelMenu(g);
+        } else if (state == STATE.LVLMENU) {
+            lvlmenu.levelMenu(g);
         }
 
         g.dispose();
@@ -343,21 +362,20 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         if (state == STATE.GAME) {
             c.tick();
-            
-            for (int column = 0; column < numberLives; column++) {
-                        playerShip = new Player(48 + (column * 20), 10, Color.WHITE);
-                        ship.add(playerShip);
-                    }
 
+            for (int column = 0; column < numberLives; column++) {
+                playerShip = new Player(48 + (column * 20), 10, Color.WHITE);
+                ship.add(playerShip);
+            }
 
             if (Collision(player, w)) {
                 c.addWeaponW(new Weapon());
                 System.out.println("WeaponAdd");
             }
             Collision(player, enemyList);
-                //System.out.println("debug");
-                //stop();
-                
+            //System.out.println("debug");
+            //stop();
+
             Collision(es, w);
 
             Collision(enemyList, es);
@@ -377,28 +395,32 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
 
-        if (enemyList.isEmpty()) {
+        if (enemyList.isEmpty() && level != -2) {
             ship.clear();
             level += 1;
             run();
+        } else if(enemyList.isEmpty() && level == -2){
+            ship.clear();
+            bonus++;
         }
-        if(level == 4)
-        {
-            int answer = JOptionPane.showConfirmDialog(null, "You win the game with" + score +" points! Would you like to play again??", "You WON!!!!", 0);
 
-                 if(answer == 0)
-                {
-                    enemyList.clear();
-                    score = 0;
+        if (level == 4 || bonus == 1) {
+            int answer = JOptionPane.showConfirmDialog(null, "You win the game with" + score + " points! Would you like to play again??", "You WON!!!!", 0);
+
+            if (answer == 0) {
+                enemyList.clear();
+                score = 0;
+                if (level == 4) {
                     level = 1;
-                    run();
+                } else {
+                    level = -2;
+                    bonus--;
                 }
-                else
-                {
-                    System.exit(0);
-                }
-
-         }
+                run();
+            } else {
+                System.exit(0);
+            }
+        }
 
         var iterator = enemyList.getIterator();
         while (iterator.hasNext()) {
@@ -417,9 +439,8 @@ public class Game extends Canvas implements Runnable {
                     Enemy enemy = iterator2.next();
                     enemy.setY(enemy.getY() + GO_DOWN);
                 }
-            }else if(level == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3)
-            {
-            direction = -3;
+            } else if (level == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
+                direction = -3;
 
                 var iterator4 = enemyList.getIterator();
 
@@ -427,9 +448,9 @@ public class Game extends Canvas implements Runnable {
 
                     Enemy enemy3 = iterator4.next();
                     enemy3.setY(enemy3.getY() + GO_DOWN);
-            }}else if(level == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4)
-            {
-            direction = -4;
+                }
+            } else if (level == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4) {
+                direction = -4;
 
                 var iterator6 = enemyList.getIterator();
 
@@ -437,7 +458,10 @@ public class Game extends Canvas implements Runnable {
 
                     Enemy enemy5 = iterator6.next();
                     enemy5.setY(enemy5.getY() + GO_DOWN);
-            }}
+                }
+            } else if (level == -2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
+                direction = -3;
+            }
             //when enemy reach left border it change moving direction and move down
             if (level == 1 && x <= BORDER_LEFT && direction != 2) {
 
@@ -450,9 +474,8 @@ public class Game extends Canvas implements Runnable {
                     Enemy enemy2 = iterator3.next();
                     enemy2.setY(enemy2.getY() + GO_DOWN);
                 }
-            }else if (level == 2 && x <= BORDER_LEFT && direction != 3)
-            {
-                 direction = 3;
+            } else if (level == 2 && x <= BORDER_LEFT && direction != 3) {
+                direction = 3;
 
                 var iterator5 = enemyList.getIterator();
 
@@ -461,10 +484,9 @@ public class Game extends Canvas implements Runnable {
                     Enemy enemy4 = iterator5.next();
                     enemy4.setY(enemy4.getY() + GO_DOWN);
 
-            }
-        }else if (level == 3 && x <= BORDER_LEFT && direction != 4)
-            {
-                 direction = 4;
+                }
+            } else if (level == 3 && x <= BORDER_LEFT && direction != 4) {
+                direction = 4;
 
                 var iterator7 = enemyList.getIterator();
 
@@ -473,8 +495,10 @@ public class Game extends Canvas implements Runnable {
                     Enemy enemy6 = iterator7.next();
                     enemy6.setY(enemy6.getY() + GO_DOWN);
 
+                }
+            } else if (level == -2 && x <= BORDER_LEFT && direction != 3) {
+                direction = 3;
             }
-        }
         }
         var it = enemyList.getIterator();
         //enemy movement
@@ -584,9 +608,9 @@ public class Game extends Canvas implements Runnable {
                     c.addBullet(new Shot(player.getX(), player.getY(), BulletTemSpeed));
                 } else if (key == KeyEvent.VK_Z && !buffIsUsing) {
                     if (!c.isEmptyWaitingW()) {
-                        System.out.println(c.size()+1);
+                        System.out.println(c.size() + 1);
                         usingWeapon = c.removeWeaponW();
-                        System.out.println(c.size()+1);
+                        System.out.println(c.size() + 1);
                         startBuff();
                     }
                 }
@@ -616,8 +640,8 @@ public class Game extends Canvas implements Runnable {
         public void mousePressed(MouseEvent e) {
             int mx = e.getX();
             int my = e.getY();
-            
-            if(Game.state == Game.STATE.MENU){
+
+            if (Game.state == Game.STATE.MENU) {
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
                     if (my >= 120 && my <= 170) {
                         Game.state = Game.state.GAME;
@@ -627,16 +651,16 @@ public class Game extends Canvas implements Runnable {
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
                 }
-                
-                if(mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220){
-                    if(my >= 180 && my <= 230){
+
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                    if (my >= 180 && my <= 230) {
                         //displayLevel()
-                    Game.state = Game.state.LVLMENU;
-                    displayLevel();
-                    
+                        Game.state = Game.state.LVLMENU;
+                        displayLevel();
+
                     }
                 }
-                
+
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
                     if (my >= 240 && my <= 290) {
                         displayScore();
@@ -653,40 +677,49 @@ public class Game extends Canvas implements Runnable {
                         System.exit(1);
                     }
                 }
-            }
-            else if(Game.state == Game.state.LVLMENU)
-            {
+            } else if (Game.state == Game.state.LVLMENU) {
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                if (my >= 150 && my <= 200) {
-                    Game.state = Game.state.GAME;
-                    level = 1;
-                    PlaySound(filepathG);
+                    if (my >= 150 && my <= 200) {
+                        Game.state = Game.state.GAME;
+                        level = 1;
+                        PlaySound(filepathG);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
+                    }
                 }
-            }
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                if (my >= 250 && my <= 300) {
-                    Game.state = Game.state.GAME;
-                    level = 2;
-                    PlaySound(filepathG);
+                    if (my >= 220 && my <= 270) {
+                        Game.state = Game.state.GAME;
+                        level = 2;
+                        enemyInit(level, 2 + level);
+                        PlaySound(filepathG);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
+                    }
                 }
-            }
-                
+
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
-                if (my >= 350 && my <= 400) {
-                    Game.state = Game.state.GAME;
-                    level = 3;
-                    PlaySound(filepathG);
+                    if (my >= 290 && my <= 340) {
+                        Game.state = Game.state.GAME;
+                        level = 3;
+                        enemyInit(level, 2 + level);
+                        PlaySound(filepathG);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
+                    }
                 }
-            }
+                if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
+                    if (my >= 360 && my <= 410) {
+                        Game.state = Game.state.GAME;
+                        level = -2;
+                        enemyInit(5, 4);
+                        PlaySound(filepathG);
+                        clip.start();
+                        clip.loop(Clip.LOOP_CONTINUOUSLY);
+                    }
+                }
             }
 
-            
         }
 
         @Override
@@ -716,15 +749,15 @@ public class Game extends Canvas implements Runnable {
         }
         return false;
     }
-    
+
     public boolean Collision(LinkedList<Shot> es, ArrayList<Weapon> w) {
-        
+
         for (int i = 0; i < w.size(); i++) {
-            for(int j=0; j<es.size();j++){
-            if (es.get(j).getBounds().intersects(w.get(i).getBounds())) {
-                c.removeWeapon((Weapon) c.getW().get(i));
-                return true;
-            }
+            for (int j = 0; j < es.size(); j++) {
+                if (es.get(j).getBounds().intersects(w.get(i).getBounds())) {
+                    c.removeWeapon((Weapon) c.getW().get(i));
+                    return true;
+                }
             }
         }
         return false;
@@ -735,22 +768,19 @@ public class Game extends Canvas implements Runnable {
             //player touch with enemy or enemy inner class laser, return true
             if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())
                     || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
-                
+
                 /*int index = ship.size() - 1;
                 ship.remove(index);
             }
             else if(ship.isEmpty()){*/
                 int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", "You lost the game with " + score + " points", 0);
-                
-                if(answer == 0)
-                {
+
+                if (answer == 0) {
                     enemyList.clear();
                     score = 0;
                     level = 1;
                     run();
-                }
-                else
-                {
+                } else {
                     System.exit(0);
                 }
                 return true;
@@ -761,8 +791,8 @@ public class Game extends Canvas implements Runnable {
                 //System.out.println("laser intersect:" + p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()));
                 //System.out.println(i);
             }
-            }
-        
+        }
+
         return false;
     }
 
@@ -794,16 +824,15 @@ public class Game extends Canvas implements Runnable {
         BulletTemSpeed = usingWeapon.getSpeed();
         buffIsUsing = true;
     }
-    
-    public void displayLevel()
-    {
-     Game game = new Game();
+
+    public void displayLevel() {
+        Game game = new Game();
 
         game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 
-      JFrame frame = new JFrame(game.TITLE); 
+        JFrame frame = new JFrame(game.TITLE);
         frame.pack();
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
@@ -842,13 +871,12 @@ public class Game extends Canvas implements Runnable {
             }
         });
     }
-    
+
     private void displayScore() {
-    JFrame scoreFrame = new JFrame();
-    scoreFrame.setSize(630, 500);
-    scoreFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    scoreFrame.setLocationRelativeTo(null);
-    scoreFrame.setVisible(true); 
+        JFrame scoreFrame = new JFrame();
+        scoreFrame.setSize(630, 500);
+        scoreFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        scoreFrame.setLocationRelativeTo(null);
+        scoreFrame.setVisible(true);
     }
 }
-
