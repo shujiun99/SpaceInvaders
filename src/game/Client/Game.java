@@ -3,6 +3,8 @@ package game.Client;
 import game.Entity.Enemy;
 import game.ADT.ArrayListWithIterator;
 import game.ADT.ArrListWithIteratorInterface;
+import game.ADT.ArraySort;
+import game.ADT.SortInterface;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -13,6 +15,7 @@ import game.Entity.Player;
 import game.Entity.Shot;
 import game.Entity.Weapon;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -31,6 +34,7 @@ import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 public class Game extends Canvas implements Runnable {
 
@@ -119,7 +123,12 @@ public class Game extends Canvas implements Runnable {
     public LinkedList<Shot> es;
     public Shot shot;
     public static Clip clip;
-
+    
+    public SortInterface<Integer> scoreboard = new ArraySort<Integer>();
+    public SortInterface<Integer> enekill = new ArraySort<Integer>();
+    
+    int num = 0;
+    int playerno = 0;
     int numberLives = 3;
     int score = 0;
     int level = 1;
@@ -245,14 +254,20 @@ public class Game extends Canvas implements Runnable {
             for (int i = 0; i < ship.size(); i++) {
                 ship.get(i).lifeDraw(g);
             }*/
-            //display player score
+                        //display player score
             g.setColor(Color.WHITE);
-            g.drawString("Score: " + score, 290, 20);
+            g.drawString("Score: " + score, 420, 20);
 
             //makes a string that says "+100" on enemy hit
             //show level
             g.setColor(Color.WHITE);
             g.drawString("Level " + level, 590, 20);
+            
+            g.setColor(Color.WHITE);
+            g.drawString("Enemy Kill: " + enemyKilled, 180, 20);
+            
+            g.setColor(Color.WHITE);
+            g.drawString("Player " + playerno, 20, 20);
 
         } else if (state == STATE.MENU) {
             menu.render(g);
@@ -649,6 +664,7 @@ public class Game extends Canvas implements Runnable {
                         PlaySound(filepathG);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
+                        playerno++;
                     }
                 }
 
@@ -657,7 +673,7 @@ public class Game extends Canvas implements Runnable {
                         //displayLevel()
                         Game.state = Game.state.LVLMENU;
                         displayLevel();
-
+                        playerno++;
                     }
                 }
 
@@ -773,16 +789,24 @@ public class Game extends Canvas implements Runnable {
                 ship.remove(index);
             }
             else if(ship.isEmpty()){*/
-                int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", "You lost the game with " + score + " points", 0);
-
-                if (answer == 0) {
+                JOptionPane.showMessageDialog(null,"You lost the game with " + score + " points");
+                    if(num > 4){
+                       scoreboard.clear();
+                       enekill.clear();
+                       num = 0;
+                    }
+                     
+                    scoreboard.add(score);
+                    enekill.add(enemyKilled);
+                    num++;
+                
                     enemyList.clear();
+                    enemyKilled = 0;
                     score = 0;
                     level = 1;
+                    Game.state = Game.STATE.MENU;
                     run();
-                } else {
-                    System.exit(0);
-                }
+                
                 return true;
                 //System.out.println("player bound:" + p.getBounds());
 
@@ -872,11 +896,26 @@ public class Game extends Canvas implements Runnable {
         });
     }
 
-    private void displayScore() {
-        JFrame scoreFrame = new JFrame();
-        scoreFrame.setSize(630, 500);
-        scoreFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        scoreFrame.setLocationRelativeTo(null);
-        scoreFrame.setVisible(true);
+        private void displayScore() {
+        JTextArea jtScore = new JTextArea();
+    
+        String str = String.format("%16s\n\n", "ScoreBoard");
+        //str += String.format("%30s %24s\n\n", "Score","Enemy Kill" );
+        
+        str += String.format("Score  \n" + scoreboard + "\n");
+        str += String.format("Enemy Kill  \n" + enekill);
+        Font font = new Font("Arial", Font.BOLD, 20);
+        jtScore.setText(str);
+        jtScore.setEditable(false);
+        jtScore.setFont(font);
+        
+        JFrame jframe = new JFrame();
+        jframe.add(jtScore);
+
+        jframe.setSize(200, 450);
+        jframe.setLocationRelativeTo(null);
+        jframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        jframe.setVisible(true);
+        
     }
 }
