@@ -382,12 +382,11 @@ public class Game extends Canvas implements Runnable {
             level += 1;
             run();
         }
-        
         if(level == 4)
         {
             int answer = JOptionPane.showConfirmDialog(null, "You win the game with" + score +" points! Would you like to play again??", "You WON!!!!", 0);
-                
-                if(answer == 0)
+
+                 if(answer == 0)
                 {
                     enemyList.clear();
                     score = 0;
@@ -398,17 +397,16 @@ public class Game extends Canvas implements Runnable {
                 {
                     System.exit(0);
                 }
-                
-        }
+
+         }
 
         var iterator = enemyList.getIterator();
-
         while (iterator.hasNext()) {
 
             double x = iterator.next().getX();
             //System.out.println(x);
             //when enemy reach right border it change moving direction and move down
-            if (x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
+            if (level == 1 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
 
                 direction = -2;
 
@@ -419,9 +417,29 @@ public class Game extends Canvas implements Runnable {
                     Enemy enemy = iterator2.next();
                     enemy.setY(enemy.getY() + GO_DOWN);
                 }
-            }
+            }else if(level == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3)
+            {
+            direction = -3;
+
+                var iterator4 = enemyList.getIterator();
+
+                while (iterator4.hasNext()) {
+
+                    Enemy enemy3 = iterator4.next();
+                    enemy3.setY(enemy3.getY() + GO_DOWN);
+            }}else if(level == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4)
+            {
+            direction = -4;
+
+                var iterator6 = enemyList.getIterator();
+
+                while (iterator6.hasNext()) {
+
+                    Enemy enemy5 = iterator6.next();
+                    enemy5.setY(enemy5.getY() + GO_DOWN);
+            }}
             //when enemy reach left border it change moving direction and move down
-            if (x <= BORDER_LEFT && direction != 2) {
+            if (level == 1 && x <= BORDER_LEFT && direction != 2) {
 
                 direction = 2;
 
@@ -432,9 +450,32 @@ public class Game extends Canvas implements Runnable {
                     Enemy enemy2 = iterator3.next();
                     enemy2.setY(enemy2.getY() + GO_DOWN);
                 }
+            }else if (level == 2 && x <= BORDER_LEFT && direction != 3)
+            {
+                 direction = 3;
+
+                var iterator5 = enemyList.getIterator();
+
+                while (iterator5.hasNext()) {
+
+                    Enemy enemy4 = iterator5.next();
+                    enemy4.setY(enemy4.getY() + GO_DOWN);
+
+            }
+        }else if (level == 3 && x <= BORDER_LEFT && direction != 4)
+            {
+                 direction = 4;
+
+                var iterator7 = enemyList.getIterator();
+
+                while (iterator7.hasNext()) {
+
+                    Enemy enemy6 = iterator7.next();
+                    enemy6.setY(enemy6.getY() + GO_DOWN);
+
             }
         }
-
+        }
         var it = enemyList.getIterator();
         //enemy movement
         while (it.hasNext()) {
@@ -810,3 +851,4 @@ public class Game extends Canvas implements Runnable {
     scoreFrame.setVisible(true); 
     }
 }
+
