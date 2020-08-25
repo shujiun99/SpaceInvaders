@@ -55,6 +55,10 @@ public class Enemy extends Entity {
      * @param imgPath
      */
     public Enemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
+        initEnemy(x, y, width, height, laser_width, laser_height, imgPath);
+    }
+
+    private void initEnemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
         this.x = x;
         this.y = y;
         this.height = height;
@@ -95,12 +99,16 @@ public class Enemy extends Entity {
          * @param height
          */
         public Laser(int x, int y, int width, int height) {
+            initLaser(x, y, width, height);
+        }
+        
+        private void initLaser(int x, int y, int width, int height) {
             setRemove(true);
 
             this.x = x;
             this.y = y;
-            this.width = width;
-            this.height = height;
+            this.width=width;
+            this.height=height;
 
             var LaserImg = "src/images/laser.png";
             var ii = new ImageIcon(LaserImg);
