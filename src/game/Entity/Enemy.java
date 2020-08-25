@@ -15,16 +15,6 @@ public class Enemy extends Entity {
 
     private Laser laser;
     private boolean visible;
-    private boolean remove;
-
-    public boolean isRemove() {
-        return remove;
-    }
-
-    public void setRemove(boolean remove) {
-        this.remove = remove;
-    }
-
     /**
      *
      * @return
