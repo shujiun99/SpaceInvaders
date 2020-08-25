@@ -76,8 +76,7 @@ public class Game extends Canvas implements Runnable {
     private int enemyKilled = 0;
     //initialize buff
     public boolean buffIsUsing = false;
-    //random number
-    private Random r = new Random();
+
     //declare weapon
     private Weapon usingWeapon;
     //declare timestart
@@ -88,6 +87,8 @@ public class Game extends Canvas implements Runnable {
     private ArrayList<Player> ship = new ArrayList();
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
+    //enemy default moving speed and direction, positive is right, negative is left
+    int direction = 2;
     //declare controller
     public static Clip clip;
 
@@ -289,6 +290,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void RandomWeapon() {
+        //random number
+        Random r = new Random();
         double x = r.nextInt(Game.WIDTH * Game.SCALE);
         double y = r.nextInt(Game.WIDTH * Game.SCALE);
         Instant time = Instant.now();
@@ -424,8 +427,6 @@ public class Game extends Canvas implements Runnable {
         int BORDER_RIGHT = 50;
         int BORDER_LEFT = 5;
         int bonus = 0;
-        //enemy default moving speed and direction, positive is right, negative is left
-        int direction = 2;
 
         if (enemyList.isEmpty() && level != -2) {
             ship.clear();
