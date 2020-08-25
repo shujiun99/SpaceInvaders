@@ -54,29 +54,12 @@ public class Game extends Canvas implements Runnable {
     private Thread thread;
     //initialize BufferedImage
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-
-    //space to the left and right border
-    int BORDER_RIGHT = 50;
-    int BORDER_LEFT = 5;
-    //move down range
-    int GO_DOWN = 30;
-    //enemy height and width
-    final int ENEMY_HEIGHT = 30;
-    final int ENEMY_WIDTH = 40;
-    //enemy default position
-    final int ENEMY_INIT_X = 0;
-    final int ENEMY_INIT_Y = 35;
-    //timer speed delay <- affect enemy speed?
-    final int DELAY = 15;
+    //assign width and height to all the enemy
+    final int[] ENEMY_SIZE = {40, 30};
     //enemy default moving speed and direction, positive is right, negative is left
     private int direction = 2;
-    //random number match trigger then enemy shoot
-    int trigger;
     //laser width and height
-    final int LASER_HEIGHT = 10;
-    final int LASER_WIDTH = 5;
-    //laser speed (px)
-    int laserSpeed = 2;
+    final int[] LASER_SIZE = {5, 10};
     //status
     private boolean start = true;
     //buffTime
@@ -107,9 +90,6 @@ public class Game extends Canvas implements Runnable {
     private ArrayList<Player> ship = new ArrayList();
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
-    private String[] enemyPath = {"src/images/enemy.jpg", "src/images/enemyCyan.jpg", "src/images/enemyGreen.jpg",
-        "src/images/enemyPurple.jpg", "src/images/enemyRed.jpg"};
-
     //declare controller
     public static Clip clip;
 
@@ -123,10 +103,8 @@ public class Game extends Canvas implements Runnable {
     Weapon tempWeapon;
     int num = 0;
     int playerno = 0;
-    int numberLives = 3;
     int score = 0;
     int level = 1;
-    int bonus = 0;
 
     public static enum STATE {
         MENU,
@@ -153,7 +131,13 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private void enemyInit(int row, int column) {
+    private void enemyInit(int row, int column) { //enemy height and width
+        //enemy default position
+        final int ENEMY_INIT_X = 0;
+        final int ENEMY_INIT_Y = 35;
+        String[] enemyPath = {"src/images/enemy.jpg", "src/images/enemyCyan.jpg", "src/images/enemyGreen.jpg",
+            "src/images/enemyPurple.jpg", "src/images/enemyRed.jpg"};
+
         enemyList = new ArrayListWithIterator<>();
         if (level == -2) {
             //row
@@ -161,7 +145,7 @@ public class Game extends Canvas implements Runnable {
                 //column
                 for (int j = 0; j < column; j++) {
                     var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
-                            ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT, enemyPath[i]);
+                            ENEMY_INIT_Y + 60 * i, ENEMY_SIZE[0], ENEMY_SIZE[1], LASER_SIZE[0], LASER_SIZE[1], enemyPath[i]);
                     enemyList.add(enemy);
                 }
             }
@@ -172,7 +156,7 @@ public class Game extends Canvas implements Runnable {
                 //column
                 for (int j = 0; j < column; j++) {
                     var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
-                            ENEMY_INIT_Y + 60 * i, ENEMY_WIDTH, ENEMY_HEIGHT, LASER_WIDTH, LASER_HEIGHT, enemyPath[0]);
+                            ENEMY_INIT_Y + 60 * i, ENEMY_SIZE[0], ENEMY_SIZE[1], LASER_SIZE[0], LASER_SIZE[1], enemyPath[0]);
                     enemyList.add(enemy);
                 }
             }
@@ -299,7 +283,7 @@ public class Game extends Canvas implements Runnable {
 
         iterator.forEachRemaining(Enemy -> {
             if (Enemy.isVisible()) {
-                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), ENEMY_WIDTH, ENEMY_HEIGHT, this);
+                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), ENEMY_SIZE[0], ENEMY_SIZE[1], this);
             } else if (!Enemy.isVisible() && Enemy.getLaser().isRemove()) {
                 enemyList.remove(Enemy);
             }
@@ -338,7 +322,6 @@ public class Game extends Canvas implements Runnable {
         double timePerTick = 1000000000 / fps;
         double delta = 0;
         long now;
-        int updates = 0;
         long lastTime = System.nanoTime();
 
         if (state != STATE.GAME) {
@@ -395,6 +378,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void tick() {
+        int numberLives = 3;
         if (state == STATE.GAME) {
             for (int i = 0; i < es.size(); i++) {
                 tempShot = es.get(i);
@@ -436,6 +420,12 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
+        //move down range
+        int GO_DOWN = 30;
+        //space to the left and right border
+        int BORDER_RIGHT = 50;
+        int BORDER_LEFT = 5;
+        int bonus = 0;
 
         if (enemyList.isEmpty() && level != -2) {
             ship.clear();
@@ -565,9 +555,11 @@ public class Game extends Canvas implements Runnable {
 
         // lasers
         var randomNumber = new Random();
-
+        //laser speed (px)
+        int laserSpeed = 2;
         var iterator3 = enemyList.getIterator();
-
+        //random number match trigger then enemy shoot
+        int trigger = 2;
         iterator3.forEachRemaining(Enemy -> {
             // 0-30
             int rand = randomNumber.nextInt(30);
@@ -922,7 +914,7 @@ public class Game extends Canvas implements Runnable {
 
             if (!laser.isRemove()) {
 
-                g.drawImage(laser.getImage(), (int) laser.getX(), (int) laser.getY(), LASER_WIDTH, LASER_HEIGHT, this);
+                g.drawImage(laser.getImage(), (int) laser.getX(), (int) laser.getY(), LASER_SIZE[0], LASER_SIZE[1], this);
                 //System.out.println(laser.getBounds());
             }
         });
