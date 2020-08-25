@@ -20,16 +20,14 @@ public abstract class Entity {
     protected Rectangle bounds;
     int width;
     int height;
-    private boolean visible;
+
     boolean isColliding;
-    
 
     public Entity() {
-        visible = true;
-    }
-
-    public void dead() {
-        visible = false;
+        x = 0;
+        y = 0;
+        width = 0;
+        height = 0;
     }
 
     public double getX() {
@@ -60,22 +58,10 @@ public abstract class Entity {
         return new Rectangle((int) x, (int) y, width, height);
     }
 
-    public boolean isVisible() {
-
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-
-        this.visible = visible;
-    }
-    
-    public Entity(double x, double y)
-    {
+    public Entity(double x, double y) {
         this.x = x;
         this.y = y;
-        
+
     }
-    
 
 }

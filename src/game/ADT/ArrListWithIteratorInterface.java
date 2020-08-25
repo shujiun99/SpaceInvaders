@@ -20,6 +20,8 @@ public interface ArrListWithIteratorInterface<ALWIT> {
     public boolean add(int newPosition, ALWIT newEntry);
 
     public ALWIT remove(int givenPosition);
+    
+    public boolean remove(ALWIT Entry);
 
     public void clear();
 

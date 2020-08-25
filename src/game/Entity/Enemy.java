@@ -7,14 +7,58 @@ package game.Entity;
 
 import javax.swing.ImageIcon;
 
+/**
+ *
+ * @author User
+ */
 public class Enemy extends Entity {
 
     private Laser laser;
+    private boolean visible;
+    private boolean remove;
 
+    public boolean isRemove() {
+        return remove;
+    }
+
+    public void setRemove(boolean remove) {
+        this.remove = remove;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     *
+     * @param visible
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+    
+    /**
+     *
+     * @return
+     */
     public Laser getLaser() {
         return laser;
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param laser_width
+     * @param laser_height
+     * @param imgPath
+     */
     public Enemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
         initEnemy(x, y, width, height, laser_width, laser_height, imgPath);
     }
@@ -25,6 +69,7 @@ public class Enemy extends Entity {
         this.y = y;
         this.height = height;
         this.width = width;
+        visible =true;
 
         laser = new Laser(x, y, laser_width, laser_height);
 
@@ -34,22 +79,44 @@ public class Enemy extends Entity {
         setImage(imageIcon.getImage());
     }
 
+    /**
+     *
+     * @param direction
+     */
     public void move(int direction) {
         this.x += direction;
     }
 
+    /**
+     *
+     */
     public class Laser extends Entity {
 
         private boolean remove;
 
+        /**
+         *
+         * @param x
+         * @param y
+         * @param width
+         * @param height
+         */
         public Laser(int x, int y, int width, int height) {
             initLaser(x, y, width, height);
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isRemove() {
             return remove;
         }
 
+        /**
+         *
+         * @param remove
+         */
         public void setRemove(boolean remove) {
             this.remove = remove;
         }

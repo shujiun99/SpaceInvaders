@@ -110,13 +110,13 @@ public class Game extends Canvas implements Runnable {
 
     //declare controller
     public static Clip clip;
-    
+
     public SortInterface<Integer> scoreboard = new ArraySort<Integer>();
     public SortInterface<Integer> enekill = new ArraySort<Integer>();
     public LinkedList<Shot> es = new LinkedList<Shot>();
     public ArrayList<Weapon> weapon = new ArrayList<Weapon>();
     public QueueInterface<Weapon> waitingW = new ArrayQueue<Weapon>();
-    
+
     Shot tempShot;
     Weapon tempWeapon;
     int num = 0;
@@ -180,19 +180,19 @@ public class Game extends Canvas implements Runnable {
 
     private static void PlaySound(String song) {
 
-       if(song.equals("menuSong")){
-            try{
+        if (song.equals("menuSong")) {
+            try {
                 File musicPath = new File("src/sounds/Menu.wav");
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
                 clip = AudioSystem.getClip();
                 clip.open(audioInput);
-            }catch(Exception ex){
-                
+            } catch (Exception ex) {
+
             }
-            
+
         }
-        
-        if(song.equals("gameSong")){
+
+        if (song.equals("gameSong")) {
             try {
                 File musicPath = new File("src/sounds/Game.wav");
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
@@ -200,7 +200,6 @@ public class Game extends Canvas implements Runnable {
                 clip.open(audioInput);
                 FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
                 gainControl.setValue(-25.0f); // Reduce volume by 25 decibels to make sure it doesn't hurt our ears!
-            
 
             } catch (Exception ex) {
 
@@ -247,18 +246,18 @@ public class Game extends Canvas implements Runnable {
 
         if (state == STATE.GAME) {
             player.render(g);
-            
-             for(int i = 0; i<es.size();i++){
-                 tempShot = es.get(i);
-                 
-                 tempShot.render(g);
-             }
-             
-             for(int i = 0; i<weapon.size();i++){
-                 tempWeapon = weapon.get(i);
-                 tempWeapon.render(g);
-                 
-             }
+
+            for (int i = 0; i < es.size(); i++) {
+                tempShot = es.get(i);
+
+                tempShot.render(g);
+            }
+
+            for (int i = 0; i < weapon.size(); i++) {
+                tempWeapon = weapon.get(i);
+                tempWeapon.render(g);
+
+            }
             drawEnemies(g);
             drawLaser(g);
 
@@ -268,7 +267,7 @@ public class Game extends Canvas implements Runnable {
             for (int i = 0; i < ship.size(); i++) {
                 ship.get(i).lifeDraw(g);
             }*/
-                        //display player score
+            //display player score
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score, 420, 20);
 
@@ -276,10 +275,10 @@ public class Game extends Canvas implements Runnable {
             //show level
             g.setColor(Color.WHITE);
             g.drawString("Level " + level, 590, 20);
-            
+
             g.setColor(Color.WHITE);
             g.drawString("Enemy Kill: " + enemyKilled, 180, 20);
-            
+
             g.setColor(Color.WHITE);
             g.drawString("Player " + playerno, 20, 20);
 
@@ -297,7 +296,11 @@ public class Game extends Canvas implements Runnable {
         var iterator = enemyList.getIterator();
 
         iterator.forEachRemaining(Enemy -> {
-            g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), ENEMY_WIDTH, ENEMY_HEIGHT, this);
+            if (Enemy.isVisible()) {
+                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), ENEMY_WIDTH, ENEMY_HEIGHT, this);
+            } else if (!Enemy.isVisible() && Enemy.getLaser().isRemove()) {
+                enemyList.remove(Enemy);
+            }
         });
     }
 
@@ -391,13 +394,14 @@ public class Game extends Canvas implements Runnable {
 
     private void tick() {
         if (state == STATE.GAME) {
-            for(int i = 0; i<es.size();i++){
-                 tempShot = es.get(i);
-                 
-                 if(tempShot.getY() < 0)
-                     es.remove(tempShot);
-                 tempShot.tick();
-             }
+            for (int i = 0; i < es.size(); i++) {
+                tempShot = es.get(i);
+
+                if (tempShot.getY() < 0) {
+                    es.remove(tempShot);
+                }
+                tempShot.tick();
+            }
 
             for (int column = 0; column < numberLives; column++) {
                 playerShip = new Player(48 + (column * 20), 10, Color.WHITE);
@@ -433,38 +437,39 @@ public class Game extends Canvas implements Runnable {
 
         if (enemyList.isEmpty() && level != -2) {
             ship.clear();
+            es.clear();
             level += 1;
             run();
-        } else if(enemyList.isEmpty() && level == -2){
+        } else if (enemyList.isEmpty() && level == -2) {
             ship.clear();
             bonus++;
         }
 
         if (level == 4 || bonus == 1) {
-            JOptionPane.showMessageDialog(null,"You win the game with " + score + " points!!!  You WON!!!!!");
-                    if(num > 4){
-                       scoreboard.clear();
-                       enekill.clear();
-                       num = 0;
-                    }
-                     
-                    scoreboard.add(score);
-                    enekill.add(enemyKilled);
-                    num++;
-                
-                    enemyList.clear();
-                    enemyKilled = 0;
-                    score = 0;
-                    if (level == 4) {
-                        level = 1;
-                    } else {
-                        level = -2;
-                        bonus--;
-                    }
-                    Game.state = Game.STATE.MENU;
-                    clip.stop();
-                    run();
-            
+            JOptionPane.showMessageDialog(null, "You win the game with " + score + " points!!!  You WON!!!!!");
+            if (num > 4) {
+                scoreboard.clear();
+                enekill.clear();
+                num = 0;
+            }
+
+            scoreboard.add(score);
+            enekill.add(enemyKilled);
+            num++;
+
+            enemyList.clear();
+            enemyKilled = 0;
+            score = 0;
+            if (level == 4) {
+                level = 1;
+            } else {
+                level = -2;
+                bonus--;
+            }
+            Game.state = Game.STATE.MENU;
+            clip.stop();
+            run();
+
         }
 
         var iterator = enemyList.getIterator();
@@ -712,7 +717,7 @@ public class Game extends Canvas implements Runnable {
                         System.exit(0);
                     }
                 }
-                
+
             } else if (Game.state == Game.state.LVLMENU) {
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
                     if (my >= 150 && my <= 200) {
@@ -806,32 +811,32 @@ public class Game extends Canvas implements Runnable {
     public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
         for (int i = 0; i < enemyList.getLength(); i++) {
             //player touch with enemy or enemy inner class laser, return true
-            if (p.getBounds().intersects(enemyList.getEntry(i).getBounds())
-                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) {
+            if ((p.getBounds().intersects(enemyList.getEntry(i).getBounds())
+                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) && enemyList.getEntry(i).isVisible()) {
 
                 /*int index = ship.size() - 1;
                 ship.remove(index);
             }
             else if(ship.isEmpty()){*/
-                JOptionPane.showMessageDialog(null,"You lost the game with " + score + " points");
-                    if(num > 4){
-                       scoreboard.clear();
-                       enekill.clear();
-                       num = 0;
-                    }
-                     
-                    scoreboard.add(score);
-                    enekill.add(enemyKilled);
-                    num++;
-                
-                    enemyList.clear();
-                    enemyKilled = 0;
-                    score = 0;
-                    level = 1;
-                    Game.state = Game.STATE.MENU;
-                    clip.stop();
-                    run();
-                
+                JOptionPane.showMessageDialog(null, "You lost the game with " + score + " points");
+                if (num > 4) {
+                    scoreboard.clear();
+                    enekill.clear();
+                    num = 0;
+                }
+
+                scoreboard.add(score);
+                enekill.add(enemyKilled);
+                num++;
+
+                enemyList.clear();
+                enemyKilled = 0;
+                score = 0;
+                level = 1;
+                Game.state = Game.STATE.MENU;
+                clip.stop();
+                run();
+
                 return true;
                 //System.out.println("player bound:" + p.getBounds());
 
@@ -852,10 +857,10 @@ public class Game extends Canvas implements Runnable {
 
                 for (int j = 0; j < es.size(); j++) {
                     //if enemy touch bullet, remove both
-                    if (enemyList.getEntry(i).getBounds().intersects(es.get(j).getBounds())) {
+                    if (enemyList.getEntry(i).getBounds().intersects(es.get(j).getBounds()) && enemyList.getEntry(i).isVisible()) {
                         enemyKilled++;
                         score += 100;
-                        enemyList.remove(i);
+                        enemyList.getEntry(i).setVisible(false);
                         es.remove(j);
                         return true;
 
@@ -921,19 +926,19 @@ public class Game extends Canvas implements Runnable {
         });
     }
 
-        private void displayScore() {
+    private void displayScore() {
         JTextArea jtScore = new JTextArea();
-    
+
         String str = String.format("%16s\n\n", "ScoreBoard");
         //str += String.format("%30s %24s\n\n", "Score","Enemy Kill" );
-        
+
         str += String.format("Score  \n" + scoreboard + "\n");
         str += String.format("Enemy Kill  \n" + enekill);
         Font font = new Font("Arial", Font.BOLD, 20);
         jtScore.setText(str);
         jtScore.setEditable(false);
         jtScore.setFont(font);
-        
+
         JFrame jframe = new JFrame();
         jframe.add(jtScore);
 
@@ -941,94 +946,94 @@ public class Game extends Canvas implements Runnable {
         jframe.setLocationRelativeTo(null);
         jframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         jframe.setVisible(true);
-        
+
     }
-        
+
     public class Menu {
-        
+
         public Rectangle lvlButton = new Rectangle(Game.WIDTH / 2 + 120, 120, 100, 50);
         public Rectangle scoreButton = new Rectangle(Game.WIDTH / 2 + 120, 200, 100, 50);
         public Rectangle helpButton = new Rectangle(Game.WIDTH / 2 + 120, 280, 100, 50);
         public Rectangle exitButton = new Rectangle(Game.WIDTH / 2 + 120, 350, 100, 50);
-    
-        public void render(Graphics g){
-        
-            Graphics2D g2d = (Graphics2D)g;
-        
+
+        public void render(Graphics g) {
+
+            Graphics2D g2d = (Graphics2D) g;
+
             Font fnt0 = new Font("arial", Font.BOLD, 50);
             g.setFont(fnt0);
             g.setColor(Color.red);
             g.drawString("Space Invaders", Game.WIDTH / 2, 90);
-        
+
             Font fnt2 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt2);
             g.drawString("Level", lvlButton.x + 12, lvlButton.y + 36);
             g2d.draw(lvlButton);
-        
+
             Font fnt3 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt3);
             g.drawString("Score", scoreButton.x + 9, scoreButton.y + 35);
             g2d.draw(scoreButton);
-        
+
             Font fnt4 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt4);
             g.drawString("Help", helpButton.x + 19, helpButton.y + 35);
             g2d.draw(helpButton);
-        
+
             Font fnt5 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt5);
             g.drawString("Exit", exitButton.x + 21, exitButton.y + 35);
             g2d.draw(exitButton);
-        
-        
+
             String img = "src/images/menu.png";
             ImageIcon icon = new ImageIcon(img);
-        
+
             g.drawImage(icon.getImage(), 0, 340, 136, 145, null);
-        
+
         }
     }
-    
+
     public class LevelMenu {
-        public Rectangle beginnerButton = new Rectangle(Game.WIDTH /2 + 100, 150, 150, 50);
-        public Rectangle normalButton = new Rectangle(Game.WIDTH /2 + 100, 220, 150, 50);
-        public Rectangle intermediateButton = new Rectangle(Game.WIDTH /2 + 100, 290, 150, 50);
-        public Rectangle bonusButton = new Rectangle(Game.WIDTH /2 + 100, 360, 150, 50);
-    
-        public void levelMenu(Graphics g){
-        
-            Graphics2D g2d = (Graphics2D)g;
-        
+
+        public Rectangle beginnerButton = new Rectangle(Game.WIDTH / 2 + 100, 150, 150, 50);
+        public Rectangle normalButton = new Rectangle(Game.WIDTH / 2 + 100, 220, 150, 50);
+        public Rectangle intermediateButton = new Rectangle(Game.WIDTH / 2 + 100, 290, 150, 50);
+        public Rectangle bonusButton = new Rectangle(Game.WIDTH / 2 + 100, 360, 150, 50);
+
+        public void levelMenu(Graphics g) {
+
+            Graphics2D g2d = (Graphics2D) g;
+
             Font fnt0 = new Font("arial", Font.BOLD, 50);
             g.setFont(fnt0);
             g.setColor(Color.red);
             g.drawString("Select Level", Game.WIDTH / 2, 100);
-        
+
             Font fnt1 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt1);
             g.drawString("Level 1", beginnerButton.x + 25, beginnerButton.y + 36);
             g2d.draw(beginnerButton);
-        
+
             Font fnt2 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt2);
             g.drawString("Level 2", normalButton.x + 25, normalButton.y + 36);
             g2d.draw(normalButton);
-        
+
             Font fnt3 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt3);
             g.drawString("Level 3", intermediateButton.x + 25, intermediateButton.y + 36);
             g2d.draw(intermediateButton);
-        
+
             Font fnt4 = new Font("arial", Font.BOLD, 30);
             g.setFont(fnt4);
             g.drawString("Bonus", bonusButton.x + 25, bonusButton.y + 36);
             g2d.draw(bonusButton);
-        
+
             String img = "src/images/menu.png";
             ImageIcon icon = new ImageIcon(img);
-        
+
             g.drawImage(icon.getImage(), 0, 340, 136, 145, null);
-    
+
         }
     }
 }

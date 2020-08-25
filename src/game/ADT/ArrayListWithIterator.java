@@ -91,6 +91,24 @@ public class ArrayListWithIterator<ALWIT> implements ArrListWithIteratorInterfac
     }
 
     @Override
+    public boolean remove(ALWIT Entry) {
+        if (isEmpty()) {
+            return false;
+        } else {
+            for (int i = 0; i < length; i++) {
+                if (Entry.equals(array[i])) {
+                    for (int x = i; x < length; x++) {
+                        array[x] = array[x + 1];
+                    }
+                    length--;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void clear() {
         length = 0;
     }
