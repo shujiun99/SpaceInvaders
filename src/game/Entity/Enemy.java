@@ -15,6 +15,7 @@ public class Enemy extends Entity {
 
     private Laser laser;
     private boolean visible;
+
     /**
      *
      * @return
@@ -30,13 +31,17 @@ public class Enemy extends Entity {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-    
+
     /**
      *
      * @return
      */
     public Laser getLaser() {
         return laser;
+    }
+
+    public Enemy() {
+
     }
 
     /**
@@ -50,16 +55,11 @@ public class Enemy extends Entity {
      * @param imgPath
      */
     public Enemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
-        initEnemy(x, y, width, height, laser_width, laser_height, imgPath);
-    }
-
-    private void initEnemy(int x, int y, int width, int height, int laser_width, int laser_height, String imgPath) {
-
         this.x = x;
         this.y = y;
         this.height = height;
         this.width = width;
-        visible =true;
+        visible = true;
 
         laser = new Laser(x, y, laser_width, laser_height);
 
@@ -84,6 +84,9 @@ public class Enemy extends Entity {
 
         private boolean remove;
 
+        public Laser() {
+        }
+
         /**
          *
          * @param x
@@ -92,7 +95,16 @@ public class Enemy extends Entity {
          * @param height
          */
         public Laser(int x, int y, int width, int height) {
-            initLaser(x, y, width, height);
+            setRemove(true);
+
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+
+            var LaserImg = "src/images/laser.png";
+            var ii = new ImageIcon(LaserImg);
+            setImage(ii.getImage());
         }
 
         /**
@@ -111,18 +123,5 @@ public class Enemy extends Entity {
             this.remove = remove;
         }
 
-        private void initLaser(int x, int y, int width, int height) {
-            //disable the laser for the first drawing
-            setRemove(true);
-
-            this.x = x;
-            this.y = y;
-            this.width=width;
-            this.height=height;
-
-            var LaserImg = "src/images/laser.png";
-            var ii = new ImageIcon(LaserImg);
-            setImage(ii.getImage());
-        }
     }
 }
