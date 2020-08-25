@@ -73,7 +73,7 @@ public class Enemy extends Entity {
      *
      * @param direction
      */
-    public void move(int direction) {
+    public void moveX(int direction) {
         this.x += direction;
     }
 
@@ -113,6 +113,10 @@ public class Enemy extends Entity {
          */
         public boolean isRemove() {
             return remove;
+        }
+
+        public void moveY(int speed) {
+            this.y += speed;
         }
 
         /**

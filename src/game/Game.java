@@ -75,6 +75,8 @@ public class Game extends Canvas implements Runnable {
     //laser width and height
     final int LASER_HEIGHT = 10;
     final int LASER_WIDTH = 5;
+    //laser speed (px)
+    int laserSpeed = 2;
     //status
     private boolean start = true;
     //buffTime
@@ -557,7 +559,7 @@ public class Game extends Canvas implements Runnable {
             Enemy enemy = it.next();
 
             if (enemy.isVisible()) {
-                enemy.move(direction);
+                enemy.moveX(direction);
             }
         }
 
@@ -586,7 +588,7 @@ public class Game extends Canvas implements Runnable {
             //when laser is outside of the gameboard, remove laser
             if (!laser.isRemove()) {
                 //laser moves 1px 
-                laser.setY(laser.getY() + 1);
+                laser.moveY(laserSpeed);
 
                 if (laser.getY() >= HEIGHT * SCALE) {
 
