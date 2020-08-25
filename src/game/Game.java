@@ -56,8 +56,6 @@ public class Game extends Canvas implements Runnable {
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     //assign width and height to all the enemy
     final int[] ENEMY_SIZE = {40, 30};
-    //enemy default moving speed and direction, positive is right, negative is left
-    private int direction = 2;
     //laser width and height
     final int[] LASER_SIZE = {5, 10};
     //status
@@ -426,6 +424,8 @@ public class Game extends Canvas implements Runnable {
         int BORDER_RIGHT = 50;
         int BORDER_LEFT = 5;
         int bonus = 0;
+        //enemy default moving speed and direction, positive is right, negative is left
+        int direction = 2;
 
         if (enemyList.isEmpty() && level != -2) {
             ship.clear();
