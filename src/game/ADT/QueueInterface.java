@@ -21,6 +21,4 @@ public interface QueueInterface<T> {
     public boolean isFull();
     
     public void clear();
-    
-    public T getFront();
 }

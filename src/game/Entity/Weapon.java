@@ -48,8 +48,8 @@ public class Weapon extends Entity {
         width = 40;
         height = 45;
         
-        var playerImg = "src/images/weapon.jpg";
-        var ii = new ImageIcon(playerImg);
+        var WeaponImg = "src/images/weapon.jpg";
+        var ii = new ImageIcon(WeaponImg);
 
         width = ii.getImage().getWidth(null);
         setImage(ii.getImage());

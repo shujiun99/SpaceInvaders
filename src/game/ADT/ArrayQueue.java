@@ -78,14 +78,5 @@ public class ArrayQueue<T> implements QueueInterface<T> {
             backIndex = -1;
         }
     }
-
-    @Override
-    public T getFront() {
-        T front = null;
-        if(!isEmpty()){
-            front = array[frontIndex];
-        }
-        return front;
-    }
     
 }

@@ -243,6 +243,16 @@ public class Game extends Canvas implements Runnable {
                 tempWeapon.render(g);
 
             }
+            
+            var WeaponImg = "src/images/weapon.jpg";
+            var ii = new ImageIcon(WeaponImg);
+
+     
+            g.drawImage(ii.getImage(), 10, 20, 35,30,null);
+            g.setColor(Color.WHITE);
+            int num = waitingWeapon.size();
+            g.drawString(Integer.toString(num), 40, 40);
+            
             drawEnemies(g);
             drawLaser(g);
 
