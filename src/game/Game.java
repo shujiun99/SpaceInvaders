@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import game.Entity.Player;
 import game.Entity.Shot;
 import game.Entity.Weapon;
+import game.Entity.Level;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -80,7 +81,8 @@ public class Game extends Canvas implements Runnable {
     private Instant timestart;
     //declare player
     private Player player;
-    
+    //declare level
+    private Level level;
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
     //enemy default moving speed and direction, positive is right, negative is left
@@ -93,14 +95,14 @@ public class Game extends Canvas implements Runnable {
     public LinkedList<Shot> playerShot = new LinkedList<Shot>();
     public ArrayList<Weapon> weapon = new ArrayList<Weapon>();
     public QueueInterface<Weapon> waitingWeapon = new ArrayQueue<Weapon>();
+    //public ArrayList<Level>level = new ArrayList<Level>();
 
     Shot tempShot;
     Weapon tempWeapon;
     int num = 0;
     int playerno = 0;
     int score = 0;
-    int level = 1;
-
+    int curlvl ;
     public static enum STATE {
         MENU,
         GAME,
@@ -116,13 +118,14 @@ public class Game extends Canvas implements Runnable {
         addMouseListener(new MouseInput(this));
         menu = new Menu();
         lvlmenu = new LevelMenu();
+        level = new Level(curlvl);
         /*
         bonus stage is level -2, t
          */
-        if (level == -2) {
+        if (curlvl == -2) {
             enemyInit(5, 4);
         } else {
-            enemyInit(level, 2 + level);
+            enemyInit(curlvl, 2 + curlvl);
         }
     }
 
@@ -134,7 +137,7 @@ public class Game extends Canvas implements Runnable {
             "src/images/enemyPurple.jpg", "src/images/enemyRed.jpg"};
 
         enemyList = new ArrayListWithIterator<>();
-        if (level == -2) {
+        if (curlvl == -2) {
             //row
             for (int i = 0; i < row; i++) {
                 //column
@@ -269,7 +272,7 @@ public class Game extends Canvas implements Runnable {
             //makes a string that says "+100" on enemy hit
             //show level
             g.setColor(Color.WHITE);
-            g.drawString("Level " + level, 590, 20);
+            g.drawString("Level " + curlvl, 590, 20);
 
             g.setColor(Color.WHITE);
             g.drawString("Enemy Kill: " + enemyKilled, 180, 20);
@@ -445,17 +448,17 @@ public class Game extends Canvas implements Runnable {
         int BORDER_LEFT = 5;
         int bonus = 0;
 
-        if (enemyList.isEmpty() && level != -2) {
+        if ( enemyList.isEmpty() && curlvl != -2) {
             //ship.clear();
             playerShot.clear();
-            level += 1;
+           curlvl = level.IncLevel(curlvl);
             run();
-        } else if (enemyList.isEmpty() && level == -2) {
+        } else if (enemyList.isEmpty() && curlvl == -2) {
             //ship.clear();
             bonus++;
         }
 
-        if (level == 4 || bonus == 1) {
+        if (curlvl == 4 || bonus == 1) {
             JOptionPane.showMessageDialog(null, "You win the game with " + score + " points!!!  You WON!!!!!");
             if (num > 4) {
                 scoreboard.clear();
@@ -470,10 +473,10 @@ public class Game extends Canvas implements Runnable {
             enemyList.clear();
             enemyKilled = 0;
             score = 0;
-            if (level == 4) {
-                level = 1;
+            if (curlvl == 4) {
+                curlvl = 1;
             } else {
-                level = -2;
+                curlvl = -2;
                 bonus--;
             }
             Game.state = Game.STATE.MENU;
@@ -489,24 +492,24 @@ public class Game extends Canvas implements Runnable {
             double x = iterator.next().getX();
             //System.out.println(x);
             //when enemy reach right border it change moving direction and move down
-            if (level == 1 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
+            if (curlvl == 1 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
                 changeDirection(-2);
 
-            } else if (level == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
+            } else if (curlvl == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
                 changeDirection(-3);
-            } else if (level == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4) {
+            } else if (curlvl == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4) {
                 changeDirection(-4);
-            } else if (level == -2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
+            } else if (curlvl == -2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
                 direction = -3;
             }
             //when enemy reach left border it change moving direction and move down
-            if (level == 1 && x <= BORDER_LEFT && direction != 2) {
+            if (curlvl == 1 && x <= BORDER_LEFT && direction != 2) {
                 changeDirection(2);
-            } else if (level == 2 && x <= BORDER_LEFT && direction != 3) {
+            } else if (curlvl == 2 && x <= BORDER_LEFT && direction != 3) {
                 changeDirection(3);
-            } else if (level == 3 && x <= BORDER_LEFT && direction != 4) {
+            } else if (curlvl == 3 && x <= BORDER_LEFT && direction != 4) {
                 changeDirection(4);
-            } else if (level == -2 && x <= BORDER_LEFT && direction != 3) {
+            } else if (curlvl == -2 && x <= BORDER_LEFT && direction != 3) {
                 direction = 3;
             }
         }
@@ -698,7 +701,7 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 150 && my <= 200) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        level = 1;
+                       curlvl = 1;
                         PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -708,8 +711,8 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 220 && my <= 270) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        level = 2;
-                        enemyInit(level, 2 + level);
+                       curlvl = 2;
+                        enemyInit(curlvl, 2 + curlvl);
                         PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -720,8 +723,8 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 290 && my <= 340) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        level = 3;
-                        enemyInit(level, 2 + level);
+                        curlvl = 3;
+                        enemyInit(curlvl, 2 + curlvl);
                         PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -731,7 +734,7 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 360 && my <= 410) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        level = -2;
+                        curlvl = -2;
                         enemyInit(5, 4);
                         PlaySound("gameSong");
                         clip.start();
@@ -807,7 +810,7 @@ public class Game extends Canvas implements Runnable {
                 enemyList.clear();
                 enemyKilled = 0;
                 score = 0;
-                level = 1;
+                curlvl = 1;
                 Game.state = Game.STATE.MENU;
                 waitingWeapon.clear();
                 clip.stop();
