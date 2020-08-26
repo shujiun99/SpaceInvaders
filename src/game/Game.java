@@ -140,7 +140,8 @@ public class Game extends Canvas implements Runnable {
                 //column
                 for (int j = 0; j < column; j++) {
                     var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
-                            ENEMY_INIT_Y + 60 * i, ENEMY_SIZE[0], ENEMY_SIZE[1], LASER_SIZE[0], LASER_SIZE[1], enemyPath[i]);
+                            ENEMY_INIT_Y + 60 * i, ENEMY_SIZE[0], ENEMY_SIZE[1], LASER_SIZE[0],
+                            LASER_SIZE[1], enemyPath[i]);
                     enemyList.add(enemy);
                 }
             }
@@ -151,7 +152,8 @@ public class Game extends Canvas implements Runnable {
                 //column
                 for (int j = 0; j < column; j++) {
                     var enemy = new Enemy(ENEMY_INIT_X + 70 * j,
-                            ENEMY_INIT_Y + 60 * i, ENEMY_SIZE[0], ENEMY_SIZE[1], LASER_SIZE[0], LASER_SIZE[1], enemyPath[0]);
+                            ENEMY_INIT_Y + 60 * i, ENEMY_SIZE[0], ENEMY_SIZE[1], LASER_SIZE[0],
+                            LASER_SIZE[1], enemyPath[0]);
                     enemyList.add(enemy);
                 }
             }
@@ -280,7 +282,8 @@ public class Game extends Canvas implements Runnable {
 
         iterator.forEachRemaining(Enemy -> {
             if (Enemy.isVisible()) {
-                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(), ENEMY_SIZE[0], ENEMY_SIZE[1], this);
+                g.drawImage(Enemy.getImage(), (int) Enemy.getX(), (int) Enemy.getY(),
+                        ENEMY_SIZE[0], ENEMY_SIZE[1], this);
             } else if (!Enemy.isVisible() && Enemy.getLaser().isRemove()) {
                 enemyList.remove(Enemy);
             }
@@ -427,8 +430,6 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
-        //move down range
-        int GO_DOWN = 30;
         //space to the left and right border
         int BORDER_RIGHT = 50;
         int BORDER_LEFT = 5;
@@ -479,73 +480,22 @@ public class Game extends Canvas implements Runnable {
             //System.out.println(x);
             //when enemy reach right border it change moving direction and move down
             if (level == 1 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
+                changeDirection(-2);
 
-                direction = -2;
-
-                var iterator2 = enemyList.getIterator();
-
-                while (iterator2.hasNext()) {
-
-                    Enemy enemy = iterator2.next();
-                    enemy.setY(enemy.getY() + GO_DOWN);
-                }
             } else if (level == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
-                direction = -3;
-
-                var iterator4 = enemyList.getIterator();
-
-                while (iterator4.hasNext()) {
-
-                    Enemy enemy3 = iterator4.next();
-                    enemy3.setY(enemy3.getY() + GO_DOWN);
-                }
+                changeDirection(-3);
             } else if (level == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4) {
-                direction = -4;
-
-                var iterator6 = enemyList.getIterator();
-
-                while (iterator6.hasNext()) {
-
-                    Enemy enemy5 = iterator6.next();
-                    enemy5.setY(enemy5.getY() + GO_DOWN);
-                }
+                changeDirection(-4);
             } else if (level == -2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
                 direction = -3;
             }
             //when enemy reach left border it change moving direction and move down
             if (level == 1 && x <= BORDER_LEFT && direction != 2) {
-
-                direction = 2;
-
-                var iterator3 = enemyList.getIterator();
-
-                while (iterator3.hasNext()) {
-
-                    Enemy enemy2 = iterator3.next();
-                    enemy2.setY(enemy2.getY() + GO_DOWN);
-                }
+                changeDirection(2);
             } else if (level == 2 && x <= BORDER_LEFT && direction != 3) {
-                direction = 3;
-
-                var iterator5 = enemyList.getIterator();
-
-                while (iterator5.hasNext()) {
-
-                    Enemy enemy4 = iterator5.next();
-                    enemy4.setY(enemy4.getY() + GO_DOWN);
-
-                }
+                changeDirection(3);
             } else if (level == 3 && x <= BORDER_LEFT && direction != 4) {
-                direction = 4;
-
-                var iterator7 = enemyList.getIterator();
-
-                while (iterator7.hasNext()) {
-
-                    Enemy enemy6 = iterator7.next();
-                    enemy6.setY(enemy6.getY() + GO_DOWN);
-
-                }
+                changeDirection(4);
             } else if (level == -2 && x <= BORDER_LEFT && direction != 3) {
                 direction = 3;
             }
@@ -597,6 +547,19 @@ public class Game extends Canvas implements Runnable {
             }
         });
 
+    }
+
+    private void changeDirection(int x) {
+        direction = x;
+        //move down (px)
+        int GO_DOWN = 30;
+        var iterator = enemyList.getIterator();
+
+        while (iterator.hasNext()) {
+
+            Enemy enemy = iterator.next();
+            enemy.setY(enemy.getY() + GO_DOWN);
+        }
     }
 
     private class TAdapter extends KeyAdapter {
