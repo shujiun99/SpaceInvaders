@@ -787,7 +787,7 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < enemyList.getLength(); i++) {
             //player touch with enemy or enemy inner class laser, return true
             if ((p.getBounds().intersects(enemyList.getEntry(i).getBounds())
-                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds())) && enemyList.getEntry(i).isVisible()) {
+                    || p.getBounds().intersects(enemyList.getEntry(i).getLaser().getBounds()))) {
 
                 /*int index = ship.size() - 1;
                 ship.remove(index);
