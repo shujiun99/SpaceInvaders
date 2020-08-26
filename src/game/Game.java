@@ -404,7 +404,12 @@ public class Game extends Canvas implements Runnable {
             //System.out.println("debug");
             //stop();
 
-            Collision(playerShot, weapon);
+            if(Collision(playerShot, weapon)){
+             
+                waitingWeapon.enqueue(new Weapon());
+                System.out.println("WeaponAdd");
+            }
+        
 
             Collision(enemyList, playerShot);
 
