@@ -52,8 +52,6 @@ public class Game extends Canvas implements Runnable {
     private boolean running = false;
     //declare thread
     private Thread thread;
-    //initialize BufferedImage
-    private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     //assign width and height to all the enemy
     final int[] ENEMY_SIZE = {40, 30};
     //laser width and height
@@ -61,7 +59,6 @@ public class Game extends Canvas implements Runnable {
     //status
     private boolean start = true;
     //buffTime
-    private Instant buffUsingTimeStart;
     private boolean startBuff = false;
     //bullet
     private final int bulletSpeed = 2;
@@ -83,8 +80,7 @@ public class Game extends Canvas implements Runnable {
     private Instant timestart;
     //declare player
     private Player player;
-    private Player playerShip;
-    private ArrayList<Player> ship = new ArrayList();
+    
     //declare enemy
     private ArrListWithIteratorInterface<Enemy> enemyList;
     //enemy default moving speed and direction, positive is right, negative is left
@@ -94,9 +90,9 @@ public class Game extends Canvas implements Runnable {
 
     public SortInterface<Integer> scoreboard = new ArraySort<Integer>();
     public SortInterface<Integer> enekill = new ArraySort<Integer>();
-    public LinkedList<Shot> es = new LinkedList<Shot>();
+    public LinkedList<Shot> playerShot = new LinkedList<Shot>();
     public ArrayList<Weapon> weapon = new ArrayList<Weapon>();
-    public QueueInterface<Weapon> waitingW = new ArrayQueue<Weapon>();
+    public QueueInterface<Weapon> waitingWeapon = new ArrayQueue<Weapon>();
 
     Shot tempShot;
     Weapon tempWeapon;
@@ -217,6 +213,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void render() {
+        
+        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         BufferStrategy bs = this.getBufferStrategy();
 
@@ -232,8 +230,8 @@ public class Game extends Canvas implements Runnable {
         if (state == STATE.GAME) {
             player.render(g);
 
-            for (int i = 0; i < es.size(); i++) {
-                tempShot = es.get(i);
+            for (int i = 0; i < playerShot.size(); i++) {
+                tempShot = playerShot.get(i);
 
                 tempShot.render(g);
             }
@@ -324,6 +322,7 @@ public class Game extends Canvas implements Runnable {
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();
+        Random random = new Random();
 
         if (state != STATE.GAME) {
             render();
@@ -356,7 +355,8 @@ public class Game extends Canvas implements Runnable {
                 if (!start) {
                     Instant stopt = Instant.now();
                     Duration tt = Duration.between(timestart, stopt);
-                    if (tt.getSeconds() == 6) {
+                    int num = 5 + random.nextInt(7-5+1);
+                    if (tt.getSeconds() == num) {
                         System.out.println("time to create");
                         RandomWeapon();
                         start = true;
@@ -381,36 +381,37 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         int numberLives = 3;
         if (state == STATE.GAME) {
-            for (int i = 0; i < es.size(); i++) {
-                tempShot = es.get(i);
+            for (int i = 0; i < playerShot.size(); i++) {
+                tempShot = playerShot.get(i);
 
                 if (tempShot.getY() < 0) {
-                    es.remove(tempShot);
+                    playerShot.remove(tempShot);
                 }
                 tempShot.tick();
             }
-
+/*
             for (int column = 0; column < numberLives; column++) {
+                
                 playerShip = new Player(48 + (column * 20), 10, Color.WHITE);
                 ship.add(playerShip);
-            }
+            }*/
 
             if (Collision(player, weapon)) {
-                waitingW.enqueue(new Weapon());
+                waitingWeapon.enqueue(new Weapon());
                 System.out.println("WeaponAdd");
             }
             Collision(player, enemyList);
             //System.out.println("debug");
             //stop();
 
-            Collision(es, weapon);
+            Collision(playerShot, weapon);
 
-            Collision(enemyList, es);
+            Collision(enemyList, playerShot);
 
             if (buffIsUsing) {
                 Instant endBuffTime = Instant.now();
                 Duration interval = Duration.between(usingWeapon.getStartTime(), endBuffTime);
-                if (interval.getSeconds() == 6) {
+                if (interval.getSeconds() == usingWeapon.getUsingTime()) {
                     BulletTemSpeed = bulletSpeed;
                     buffIsUsing = false;
                     System.out.println("Stop Buff");
@@ -429,12 +430,12 @@ public class Game extends Canvas implements Runnable {
         int bonus = 0;
 
         if (enemyList.isEmpty() && level != -2) {
-            ship.clear();
-            es.clear();
+            //ship.clear();
+            playerShot.clear();
             level += 1;
             run();
         } else if (enemyList.isEmpty() && level == -2) {
-            ship.clear();
+            //ship.clear();
             bonus++;
         }
 
@@ -460,6 +461,7 @@ public class Game extends Canvas implements Runnable {
                 bonus--;
             }
             Game.state = Game.STATE.MENU;
+            waitingWeapon.clear();
             clip.stop();
             run();
 
@@ -650,12 +652,12 @@ public class Game extends Canvas implements Runnable {
                 }
                 if (key == KeyEvent.VK_SPACE && !isShooting) {
                     isShooting = true;
-                    es.add(new Shot(player.getX(), player.getY(), BulletTemSpeed));
+                    playerShot.add(new Shot(player.getX(), player.getY(), BulletTemSpeed));
                 } else if (key == KeyEvent.VK_Z && !buffIsUsing) {
-                    if (!waitingW.isEmpty()) {
-                        System.out.println(waitingW.size() + 1);
-                        usingWeapon = waitingW.dequeue();
-                        System.out.println(waitingW.size() + 1);
+                    if (!waitingWeapon.isEmpty()) {
+                        System.out.println(waitingWeapon.size() + 1);
+                        usingWeapon = waitingWeapon.dequeue();
+                        System.out.println(waitingWeapon.size() + 1);
                         startBuff();
                     }
                 }
@@ -829,6 +831,7 @@ public class Game extends Canvas implements Runnable {
                 score = 0;
                 level = 1;
                 Game.state = Game.STATE.MENU;
+                waitingWeapon.clear();
                 clip.stop();
                 run();
 
@@ -867,6 +870,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void startBuff() {
+        Instant buffUsingTimeStart;
         System.out.println("Start Buff");
         buffUsingTimeStart = Instant.now();
         usingWeapon.setStartTime(buffUsingTimeStart);
