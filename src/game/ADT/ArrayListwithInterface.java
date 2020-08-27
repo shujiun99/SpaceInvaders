@@ -30,5 +30,7 @@ public interface ArrayListwithInterface<T> {
     public boolean isEmpty();
     
     public boolean isFull();
+    
+    public int size();
 }
 

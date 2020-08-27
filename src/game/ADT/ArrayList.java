@@ -164,4 +164,10 @@ public class ArrayList<T> implements ArrayListwithInterface<T>{
         }
         return output;
     }
+    
+    public int size()
+    {
+    return length;
+    }
+    
 }
