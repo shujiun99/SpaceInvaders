@@ -14,7 +14,6 @@ public class Level {
    public Level(int level)
     {
     initLevel(level);
-    lvl = 0;
     }
     
     private void initLevel(int lvel)
