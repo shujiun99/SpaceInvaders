@@ -469,6 +469,7 @@ public class Game extends Canvas implements Runnable {
             scoreboard.add(score);
             enekill.add(enemyKilled);
             num++;
+            playerShot.clear();
 
             enemyList.clear();
             enemyKilled = 0;
@@ -806,6 +807,7 @@ public class Game extends Canvas implements Runnable {
                 scoreboard.add(score);
                 enekill.add(enemyKilled);
                 num++;
+                playerShot.clear();
 
                 enemyList.clear();
                 enemyKilled = 0;

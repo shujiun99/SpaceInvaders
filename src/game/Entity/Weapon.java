@@ -28,6 +28,8 @@ public class Weapon extends Entity {
         this.x = x;
         this.y = y;
         this.startTime = startTime;
+        width = 40;
+        height = 45;
     }
 
     public Weapon() {
@@ -45,9 +47,6 @@ public class Weapon extends Entity {
     
     public void initWeapon(double x, double y){
         
-        width = 40;
-        height = 45;
-        
         var WeaponImg = "src/images/weapon.jpg";
         var ii = new ImageIcon(WeaponImg);
 
@@ -57,7 +56,7 @@ public class Weapon extends Entity {
     }
     
     public void render(Graphics g) {
-        g.drawImage(image, (int)x, (int)y, 45,40,null);
+        g.drawImage(image, (int)x, (int)y, height,width,null);
     }
 
     public Instant getStartTime() {
