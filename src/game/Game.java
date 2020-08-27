@@ -406,9 +406,8 @@ public class Game extends Canvas implements Runnable {
                     for (int i = 0; i < weapon.size(); i++) {
                         Instant endTime = Instant.now();
                         weapon.get(i).setEndTime(endTime);
-                        Duration interval = Duration.between(weapon.get(i).getStartTime(), endTime);
-                        if (interval.getSeconds() == 5) {
-                            weapon.remove((Weapon) weapon.get(i));
+                        if (weapon.get(i).timeToEnd()) {
+                            weapon.remove(weapon.get(i));
                         }
                     }
                 }
