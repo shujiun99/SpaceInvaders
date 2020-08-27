@@ -19,7 +19,6 @@ import javax.swing.ImageIcon;
 public class Weapon extends Entity {
     
     Instant startTime;
-    long endTime;
     int speed;
     int usingTime = 6;
     
@@ -63,10 +62,7 @@ public class Weapon extends Entity {
         return startTime;
     }
     
-    public void setEndTime(long endTime){
-        this.endTime = endTime;
-    }
-
+   
     public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
@@ -75,10 +71,7 @@ public class Weapon extends Entity {
         return speed;
     }
 
-    public long getEndTime() {
-        return endTime;
-    }
-
+    
     public int getUsingTime() {
         return usingTime;
     }
