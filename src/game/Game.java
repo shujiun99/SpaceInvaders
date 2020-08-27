@@ -382,6 +382,7 @@ public class Game extends Canvas implements Runnable {
                 if (!weapon.isEmpty()) {
                     for (int i = 0; i < weapon.size(); i++) {
                         Instant endTime = Instant.now();
+                        weapon.get(i).setEndTime(endTime);
                         Duration interval = Duration.between(weapon.get(i).getStartTime(), endTime);
                         if (interval.getSeconds() == 5) {
                             weapon.remove((Weapon) weapon.get(i));
@@ -431,8 +432,8 @@ public class Game extends Canvas implements Runnable {
 
             if (buffIsUsing) {
                 Instant endBuffTime = Instant.now();
-                Duration interval = Duration.between(usingWeapon.getStartTime(), endBuffTime);
-                if (interval.getSeconds() == usingWeapon.getUsingTime()) {
+                usingWeapon.setEndTime(endBuffTime);
+                if (usingWeapon.buffEnd()) {
                     BulletTemSpeed = bulletSpeed;
                     buffIsUsing = false;
                     System.out.println("Stop Buff");
@@ -853,9 +854,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void startBuff() {
-        Instant buffUsingTimeStart;
         System.out.println("Start Buff");
-        buffUsingTimeStart = Instant.now();
+        Instant buffUsingTimeStart = Instant.now();
         usingWeapon.setStartTime(buffUsingTimeStart);
         BulletTemSpeed = usingWeapon.getSpeed();
         buffIsUsing = true;
