@@ -21,8 +21,6 @@ public abstract class Entity {
     int width;
     int height;
 
-    boolean isColliding;
-
     public Entity() {
         x = 0;
         y = 0;

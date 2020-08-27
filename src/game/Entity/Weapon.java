@@ -49,8 +49,8 @@ public class Weapon extends Entity {
     
     public void initWeapon(){
         
-        var WeaponImg = "src/images/weapon.jpg";
-        var ii = new ImageIcon(WeaponImg);
+        String WeaponImg = "src/images/weapon.jpg";
+        ImageIcon ii = new ImageIcon(WeaponImg);
 
         width = ii.getImage().getWidth(null);
         setImage(ii.getImage());
@@ -74,8 +74,8 @@ public class Weapon extends Entity {
     }
     
     public Duration duration(){
-        Duration interval;
-        return interval = Duration.between(getStartTime(), getEndTime());
+        Duration interval = Duration.between(getStartTime(), getEndTime());
+        return interval;
     }
     
     public void render(Graphics g) {
