@@ -189,6 +189,17 @@ public class LList<T> implements LListInterface<T>{
         return found;
     }
     
+    @Override
+  public String toString() {
+    String outputStr = "";
+    Node currentNode = fNode;
+    while (currentNode != null) {
+      outputStr += currentNode.data + "\n";
+      currentNode = currentNode.next;
+    }
+    return outputStr;
+  }
+    
     private class Node
     {
         private T data;
