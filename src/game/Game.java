@@ -30,6 +30,8 @@ import game.ADT.ArrayQueue;
 import game.ADT.ArraySort;
 import game.ADT.QueueInterface;
 import game.ADT.SortInterface;
+import game.ADT.LList;
+import game.ADT.LListInterface;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -115,7 +117,7 @@ public class Game extends Canvas implements Runnable {
 
     public SortInterface<Integer> scoreboard = new ArraySort<Integer>();
     public SortInterface<Integer> enekill = new ArraySort<Integer>();
-    public LinkedList<Shot> playerShot = new LinkedList<Shot>();
+    public LListInterface<Shot> playerShot = new LList<Shot>();
     public ArrayList<Weapon> weapon = new ArrayList<Weapon>();
     public QueueInterface<Weapon> waitingWeapon = new ArrayQueue<Weapon>();
     //public ArrayList<Level>level = new ArrayList<Level>();
@@ -258,8 +260,8 @@ public class Game extends Canvas implements Runnable {
         if (state == STATE.GAME) {
             player.render(g);
 
-            for (int i = 0; i < playerShot.size(); i++) {
-                tempShot = playerShot.get(i);
+            for (int i = 1; i < playerShot.getLength(); i++) {
+                tempShot = playerShot.getEntry(i);
 
                 tempShot.render(g);
             }
@@ -282,12 +284,6 @@ public class Game extends Canvas implements Runnable {
             drawEnemies(g);
             drawLaser(g);
 
-            //display player lives
-            /*g.setColor(Color.WHITE);
-            g.drawString("Lives: ", 11, 20);
-            for (int i = 0; i < ship.size(); i++) {
-                ship.get(i).lifeDraw(g);
-            }*/
             //display player score
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score, 420, 20);
@@ -420,11 +416,11 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         int numberLives = 3;
         if (state == STATE.GAME) {
-            for (int i = 0; i < playerShot.size(); i++) {
-                tempShot = playerShot.get(i);
+            for (int i = 1; i < playerShot.getLength(); i++) {
+                tempShot = playerShot.getEntry(i);
 
                 if (tempShot.getY() < 0) {
-                    playerShot.remove(tempShot);
+                    playerShot.remove(i);
                 }
                 tempShot.tick();
             }
@@ -797,11 +793,11 @@ public class Game extends Canvas implements Runnable {
         return false;
     }
 
-    public boolean Collision(LinkedList<Shot> es, ArrayList<Weapon> w) {
+    public boolean Collision(LListInterface<Shot> es, ArrayList<Weapon> w) {
 
         for (int i = 0; i < w.size(); i++) {
-            for (int j = 0; j < es.size(); j++) {
-                if (es.get(j).getBounds().intersects(w.get(i).getBounds())) {
+            for (int j = 1; j < es.getLength(); j++) {
+                if (es.getEntry(j).getBounds().intersects(w.get(i).getBounds())) {
                     weapon.remove(weapon.get(i));
                     return true;
                 }
@@ -809,7 +805,7 @@ public class Game extends Canvas implements Runnable {
         }
         return false;
     }
-
+    
     public boolean Collision(Player p, ArrListWithIteratorInterface<Enemy> enemyList) {
         for (int i = 0; i < enemyList.getLength(); i++) {
             //player touch with enemy or enemy inner class laser, return true
@@ -854,14 +850,14 @@ public class Game extends Canvas implements Runnable {
         return false;
     }
 
-    public boolean Collision(ArrListWithIteratorInterface<Enemy> enemyList, LinkedList<Shot> es) {
+    public boolean Collision(ArrListWithIteratorInterface<Enemy> enemyList, LListInterface<Shot> es) {
         //when there's at least 1 shot on the gameboard
         if (!es.isEmpty()) {
             for (int i = 0; i < enemyList.getLength(); i++) {
 
-                for (int j = 0; j < es.size(); j++) {
+                for (int j = 1; j < es.getLength(); j++) {
                     //if enemy touch bullet, remove both
-                    if (enemyList.getEntry(i).getBounds().intersects(es.get(j).getBounds()) && enemyList.getEntry(i).isVisible()) {
+                    if (enemyList.getEntry(i).getBounds().intersects(es.getEntry(j).getBounds()) && enemyList.getEntry(i).isVisible()) {
                         enemyKilled++;
                         score += 100;
                         enemyList.getEntry(i).setVisible(false);
