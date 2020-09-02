@@ -725,6 +725,7 @@ public class Game extends Canvas implements Runnable {
                         Game.state = Game.state.GAME;
                         clip.stop();
                        level.lvl = 1;
+                       levelList.add(new Level(curlvl));
                        enemyInit(level.getLength(), 2 + level.getLength());
                         PlaySound("gameSong");
                         clip.start();
@@ -736,6 +737,7 @@ public class Game extends Canvas implements Runnable {
                         Game.state = Game.state.GAME;
                         clip.stop();
                        level.lvl = 2;
+                        levelList.add(new Level(curlvl));
                        curlvl = level.getLength();
                         enemyInit(level.getLength(), 2 + level.getLength());
                         PlaySound("gameSong");
@@ -750,6 +752,7 @@ public class Game extends Canvas implements Runnable {
                         clip.stop();
                         level.lvl = 3;
                         curlvl = level.getLength();
+                        levelList.add(new Level(curlvl));
                         enemyInit(level.getLength(), 2 + level.getLength());
                         PlaySound("gameSong");
                         clip.start();
