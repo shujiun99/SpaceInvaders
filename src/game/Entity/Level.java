@@ -8,8 +8,6 @@ package game.Entity;
 
 public class Level {
     public int lvl ;
-    private int speed;
-    private int NumEnemy;
     
    public Level(int level)
     {
@@ -21,29 +19,36 @@ public class Level {
     this.lvl = lvel;
     }
     
-    public int IncMove(int direction, int level)
-    {
-    this.lvl = level;
-    return direction + level;
-    }
+    //public int IncMove(int direction, int level)
+    //{
+   //this.lvl = level;
+    //return direction + level;
+    //}
     
     public int IncLevel(int level)
     {
     this.lvl = level;
-    level++;
-    return level;
+    if(level<0)
+    {
+        
+        this.lvl = level - 1;
+    }
+    else if(level>0)
+    {
+        
+       this.lvl  = level + 1;
+    }
+    return lvl;
     }
     
-    public void IncEnemy(int lvl)
-    {
-    this.NumEnemy = 2 + lvl;
+       public int getLength() {
+        return lvl;
     }
     
-    public void resetlvl()
+    public int resetlvl()
     {
-    lvl = 1;
-    NumEnemy = 0;
-    speed = 0;
+    this.lvl = 1;
+    return lvl;
     }
     
 }
