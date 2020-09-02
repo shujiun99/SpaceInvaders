@@ -9,7 +9,7 @@ package game.ADT;
  *
  * @author Ben
  */
-public interface ArrayListwithInterface<T> {
+public interface ArrListwithInterface<T> {
     
     public boolean add(T newEntry);
     
