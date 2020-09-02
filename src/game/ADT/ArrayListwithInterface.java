@@ -15,7 +15,7 @@ public interface ArrayListwithInterface<T> {
     
     public boolean add(int givenPos, T newEntry);
     
-    public T remove(int givenPos);
+    public void remove(int givenPos);
     
     public void clear();
     

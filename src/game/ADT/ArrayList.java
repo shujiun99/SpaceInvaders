@@ -68,7 +68,7 @@ public class ArrayList<T> implements ArrayListwithInterface<T>{
         }
     }
     
-    public T remove(int givenPos)
+    public void remove(int givenPos)
     {
         T result = null;
         
@@ -82,7 +82,17 @@ public class ArrayList<T> implements ArrayListwithInterface<T>{
             }
             length--;
         }
-        return result;
+        
+    }
+    
+    public void remove(T entry){
+        for(int i = 0; i < length; i++){
+            if(entry==array[i]){
+                array[i] = array[i+1];
+                length--;
+            }
+        }
+        
     }
     
     private void removeGap(int givenPos)
@@ -168,6 +178,14 @@ public class ArrayList<T> implements ArrayListwithInterface<T>{
     public int size()
     {
     return length;
+    }
+    
+    public T get(int index){
+        T result = null;
+        if(index < length){
+            result = array[index];
+        }
+        return result;
     }
     
 }

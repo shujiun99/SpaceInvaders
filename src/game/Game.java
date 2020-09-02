@@ -32,6 +32,8 @@ import game.ADT.QueueInterface;
 import game.ADT.SortInterface;
 import game.ADT.LList;
 import game.ADT.LListInterface;
+import game.ADT.ArrayList;
+//import game.ADT.ArrayListwithInterface;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -55,8 +57,6 @@ import java.io.File;
 import javax.sound.sampled.AudioSystem;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.Clip;
@@ -267,8 +267,8 @@ public class Game extends Canvas implements Runnable {
             }
 
             for (int i = 0; i < weapon.size(); i++) {
-                tempWeapon = weapon.get(i);
-                tempWeapon.render(g);
+                weapon.get(i).render(g);
+                //tempWeapon.render(g);
 
             }
             
@@ -404,6 +404,7 @@ public class Game extends Canvas implements Runnable {
                         weapon.get(i).setEndTime(endTime);
                         if (weapon.get(i).timeToEnd()) {
                             weapon.remove(weapon.get(i));
+                            System.out.println(weapon.size());
                         }
                     }
                 }
@@ -656,9 +657,9 @@ public class Game extends Canvas implements Runnable {
                     playerShot.add(new Shot(player.getX(), player.getY(), BulletTemSpeed));
                 } else if (key == KeyEvent.VK_Z && !buffIsUsing) {
                     if (!waitingWeapon.isEmpty()) {
-                        System.out.println(waitingWeapon.size() + 1);
+                        System.out.println(waitingWeapon.size());
                         usingWeapon = waitingWeapon.dequeue();
-                        System.out.println(waitingWeapon.size() + 1);
+                        System.out.println(waitingWeapon.size());
                         startBuff();
                     }
                 }
@@ -787,6 +788,7 @@ public class Game extends Canvas implements Runnable {
             if (p.getBounds().intersects(w.get(i).getBounds())) {
                 System.out.println("Weapon Detected");
                 weapon.remove(weapon.get(i));
+                System.out.println(weapon.size());
                 return true;
             }
         }
