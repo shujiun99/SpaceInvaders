@@ -9,18 +9,18 @@ package game.ADT;
  *
  * @author Ben
  */
-public class ArrayList<T> implements ArrayListwithInterface<T>{
+public class ArrList<T> implements ArrListwithInterface<T>{
     
     private T[] array;
     private int length;
     private static final int DEFAULT_CAPACITY = 3;
     
-    public ArrayList()
+    public ArrList()
     {
         this(DEFAULT_CAPACITY);
     }
     
-    public ArrayList(int iniCapacity)
+    public ArrList(int iniCapacity)
     {
         length = 0;
         array = (T[]) new Object[iniCapacity];
