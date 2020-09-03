@@ -114,6 +114,8 @@ public class Game extends Canvas implements Runnable {
     private ArrListWithIteratorInterface<Enemy> enemyList;
     //enemy default moving speed and direction, positive is right, negative is left
     int direction = 2 ;
+    int leftdirection = -2;
+    int rightdirection = 2;
     //declare controller
     public static Clip clip;
 
@@ -146,14 +148,14 @@ public class Game extends Canvas implements Runnable {
         menu = new Menu();
         lvlmenu = new LevelMenu();
         level = new Level(curlvl);
-        levelList.add(new Level(level.getLength()));
+        
         /*
         bonus stage is level -2, t
          */
         if (curlvl == -2) {
             enemyInit(5, 4);
         } else {
-            enemyInit(level.getLength(), 2 + level.getLength());
+            enemyInit(level.getLevel(), 2 + level.getLevel());
         }
     }
 
@@ -270,7 +272,7 @@ public class Game extends Canvas implements Runnable {
             }
 
             for (int i = 0; i < weapon.size(); i++) {
-                weapon.get(i).render(g);
+                weapon.get(i).render(g);	         
                 //tempWeapon.render(g);
 
             }
@@ -294,7 +296,7 @@ public class Game extends Canvas implements Runnable {
             //makes a string that says "+100" on enemy hit
             //show level
             g.setColor(Color.WHITE);
-            g.drawString("Level " + level.getLength(), 590, 20);
+            g.drawString("Level " + level.getLevel(), 590, 20);
 
             g.setColor(Color.WHITE);
             g.drawString("Enemy Kill: " + enemyKilled, 180, 20);
@@ -473,14 +475,14 @@ public class Game extends Canvas implements Runnable {
         if ( enemyList.isEmpty() && curlvl != -2) {
             //ship.clear();
             playerShot.clear();
-            curlvl = level.IncLevel(curlvl);
+            curlvl = level.updateLevel(curlvl);
             run();
         } else if (enemyList.isEmpty() && curlvl == -2) {
             //ship.clear();
             bonus++;
         }
 
-        if (level.getLength() == 4 || bonus == 1) {
+        if (level.getLevel() == 4 || bonus == 1) {
             JOptionPane.showMessageDialog(null, "You win the game with " + score + " points!!!  You WON!!!!!");
             if (num > 4) {
                 scoreboard.clear();
@@ -496,7 +498,7 @@ public class Game extends Canvas implements Runnable {
             enemyList.clear();
             enemyKilled = 0;
             score = 0;
-            if (level.getLength() == 4) {
+            if (level.getLevel() == 4) {
                 curlvl = level.resetlvl();
             } else {
                 curlvl = -2;
@@ -511,27 +513,27 @@ public class Game extends Canvas implements Runnable {
 
         var iterator = enemyList.getIterator();
         while (iterator.hasNext()) {
-
+            
             double x = iterator.next().getX();
-            //System.out.println(x);
+            //System.out.println(x); 
             //when enemy reach right border it change moving direction and move down
-            if (level.getLength() == 1 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
-                changeDirection(-2);
 
-            } else if (level.getLength() == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
-                changeDirection(-3);
-            } else if (level.getLength() == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4) {
-                changeDirection(-4);
+            if (level.getLevel() == 1 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -2) {
+                changeDirection(level.addSpeed(leftdirection,curlvl));
+            } else if (level.getLevel() == 2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
+                changeDirection(level.addSpeed(leftdirection,curlvl));
+            } else if (level.getLevel() == 3 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -4) {
+                changeDirection(level.addSpeed(leftdirection,curlvl));
             } else if (curlvl == -2 && x >= WIDTH * SCALE - BORDER_RIGHT && direction != -3) {
                 direction = -3;
             }
             //when enemy reach left border it change moving direction and move down
-            if (level.getLength() == 1 && x <= BORDER_LEFT && direction != 2) {
-                changeDirection(2);
-            } else if (level.getLength() == 2 && x <= BORDER_LEFT && direction != 3) {
-                changeDirection(3);
-            } else if (level.getLength() == 3 && x <= BORDER_LEFT && direction != 4) {
-                changeDirection(4);
+            if (level.getLevel() == 1 && x <= BORDER_LEFT && direction != 2) {        
+                changeDirection(level.addSpeed(rightdirection,curlvl));
+            } else if (level.getLevel() == 2 && x <= BORDER_LEFT && direction != 3) {
+                changeDirection(level.addSpeed(rightdirection,curlvl));
+            } else if (level.getLevel() == 3 && x <= BORDER_LEFT && direction != 4) {
+                changeDirection(level.addSpeed(rightdirection,curlvl));
             } else if (curlvl == -2 && x <= BORDER_LEFT && direction != 3) {
                 direction = 3;
             }
@@ -659,9 +661,9 @@ public class Game extends Canvas implements Runnable {
                     playerShot.add(new Shot(player.getX(), player.getY(), BulletTemSpeed));
                 } else if (key == KeyEvent.VK_Z && !buffIsUsing) {
                     if (!waitingWeapon.isEmpty()) {
-                        System.out.println(waitingWeapon.size() );
+                        System.out.println(waitingWeapon.size());
                         usingWeapon = waitingWeapon.dequeue();
-                        System.out.println(waitingWeapon.size() );
+                        System.out.println(waitingWeapon.size());
                         startBuff();
                     }
                 }
@@ -720,13 +722,15 @@ public class Game extends Canvas implements Runnable {
                 }
 
             } else if (Game.state == Game.state.LVLMENU) {
+                
                 if (mx >= Game.WIDTH / 2 + 120 && mx <= Game.WIDTH / 2 + 220) {
                     if (my >= 150 && my <= 200) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                       level.lvl = 1;
+                       level.setLevel(1);
+                       curlvl = level.getLevel();
                        levelList.add(new Level(curlvl));
-                       enemyInit(level.getLength(), 2 + level.getLength());
+                       enemyInit(level.getLevel(), level.addEnemy(curlvl));
                         PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -736,10 +740,10 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 220 && my <= 270) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                       level.lvl = 2;
-                        levelList.add(new Level(curlvl));
-                       curlvl = level.getLength();
-                        enemyInit(level.getLength(), 2 + level.getLength());
+                       level.setLevel(2);
+                       curlvl = level.getLevel();
+                       levelList.add(new Level(curlvl));
+                        enemyInit(level.getLevel(), level.addEnemy(curlvl));
                         PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -750,10 +754,10 @@ public class Game extends Canvas implements Runnable {
                     if (my >= 290 && my <= 340) {
                         Game.state = Game.state.GAME;
                         clip.stop();
-                        level.lvl = 3;
-                        curlvl = level.getLength();
+                        level.setLevel(3);
+                        curlvl = level.getLevel();
                         levelList.add(new Level(curlvl));
-                        enemyInit(level.getLength(), 2 + level.getLength());
+                        enemyInit(level.getLevel(), level.addEnemy(curlvl));
                         PlaySound("gameSong");
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -796,7 +800,6 @@ public class Game extends Canvas implements Runnable {
             if (p.getBounds().intersects(w.get(i).getBounds())) {
                 System.out.println("Weapon Detected");
                 weapon.remove(weapon.get(i));
-                System.out.println(weapon.size());
                 return true;
             }
         }
