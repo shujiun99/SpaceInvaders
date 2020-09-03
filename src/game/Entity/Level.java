@@ -7,48 +7,58 @@ package game.Entity;
 
 
 public class Level {
-    public int lvl ;
+     int numlevel ;
+     int Enemy;
+     int rightdirection = 1;
+     int leftdirection = -1;
     
    public Level(int level)
     {
-    initLevel(level);
+    setLevel(level);
+    }
+   
+    public void setLevel(int level)
+    {
+    this.numlevel = level;
     }
     
-    private void initLevel(int lvel)
+    public int getLevel() 
     {
-    this.lvl = lvel;
+    return numlevel;
     }
     
-    //public int IncMove(int direction, int level)
-    //{
-   //this.lvl = level;
-    //return direction + level;
-    //}
+    public int addSpeed(int direction, int level)
+    { 
+        this.numlevel = level;
+    if(direction < 0)
+    {//left
+        direction = leftdirection - level;
+    }
+    else if(direction > 0)
+    {//right
+       direction  = rightdirection + level;
+    }
+    return direction;
     
-    public int IncLevel(int level)
-    {
-    this.lvl = level;
-    if(level<0)
-    {
-        
-        this.lvl = level - 1;
-    }
-    else if(level>0)
-    {
-        
-       this.lvl  = level + 1;
-    }
-    return lvl;
     }
     
-       public int getLength() {
-        return lvl;
+   public int addEnemy(int level)
+    {
+    Enemy = 2 + level;
+    return Enemy;
     }
+   
+    public int updateLevel(int level)
+    {
+    this.numlevel = level;
+    level++;
+    return level;
+    } 
     
     public int resetlvl()
     {
-    this.lvl = 1;
-    return lvl;
+    this.numlevel = 1;
+    return numlevel;
     }
     
 }
